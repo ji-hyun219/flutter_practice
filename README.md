@@ -13,3 +13,10 @@ flutter 연습 공간
 7. sudo softwareupdate --install-rosetta --agree-to-license
 8. IOS setup -> xcode 설치
 9. Android setup -> android studio
+
+# Flexible
+
+The Flexible widget wraps a widget, so the widget becomes resizable.
+When the Flexible widget wraps a widget, the widget becomes the Flexible widget’s child and is considered flexible.
+
+- fit, flex, child 속성
