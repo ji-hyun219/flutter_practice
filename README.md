@@ -20,3 +20,30 @@ The Flexible widget wraps a widget, so the widget becomes resizable.
 When the Flexible widget wraps a widget, the widget becomes the Flexible widget’s child and is considered flexible.
 
 - fit, flex, child 속성
+
+# business_card 구현
+
+1. Icon 과 Text 정렬
+
+```dart
+     Row(
+       children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(Icons.account_circle, size: 50),  // <--- child 삽입
+        ),
+        Column( ... ), // <--- The Column you first implemented
+      ],
+     );
+```
+
+- EdgeInsets 속성
+
+  - EdgeInsets.all() : padding 값 일괄 적용
+  - EdgeInsets.only() : left, right, top, bottom 의 padding 값을 선택 적용
+  - EdgeInsets.symmetric() : horizontal(left, right), vertical (top, bottom)의 padding 값을 적용
+
+- CrossAxisAlignment 속성
+  - center 가 default 값
+  - a Row's cross axis is vertical
+  - a Column's cross axis is horizontal
