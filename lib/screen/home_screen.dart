@@ -24,7 +24,12 @@ class HomeScreen extends StatelessWidget {
                   flex: 1,
                   fit: FlexFit.tight,
                   child: Container(
-                      width: 50.0, height: 50.0, color: Colors.yellow))
+                      width: 50.0, height: 50.0, color: Colors.yellow)),
+              Icon(
+                Icons.widgets,
+                size: 50.0,
+                color: Colors.orange,
+              )
             ],
           ),
         )),
