@@ -23,7 +23,9 @@ When the Flexible widget wraps a widget, the widget becomes the Flexible widget�
 
 # business_card 구현
 
-1. Icon 과 Text 정렬
+참고: https://docs.flutter.dev/codelabs/layout-basics#putting-it-all-together
+
+## 1. Icon 과 Text 정렬
 
 ```dart
      Row(
@@ -47,3 +49,9 @@ When the Flexible widget wraps a widget, the widget becomes the Flexible widget�
   - center 가 default 값
   - a Row's cross axis is vertical
   - a Column's cross axis is horizontal
+
+## 2. 주소, 연락처 정렬
+
+MainAxisSize.min 와 MainAxisAlignment 같이 사용할 시
+적용이 되지 않았다.
+MainAxisSize.min 을 해제해야 함
