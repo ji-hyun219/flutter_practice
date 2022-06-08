@@ -109,3 +109,8 @@ Widget build(BuildContext context) {
 
 - 주석 처리한 부분은 기존의 코드입니다.
 - 주석 처리한 부분은 사용하지 말아야 할 코드입니다.
+
+# Building Layouts final touch
+
+- Column vs ListView
+  a ListView supports app body scrolling when the app is run on a small device.
