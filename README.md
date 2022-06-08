@@ -110,7 +110,88 @@ Widget build(BuildContext context) {
 - 주석 처리한 부분은 기존의 코드입니다.
 - 주석 처리한 부분은 사용하지 말아야 할 코드입니다.
 
-# Building Layouts final touch
+### Building Layouts final touch
 
 - Column vs ListView
-  a ListView supports app body scrolling when the app is run on a small device.
+  - a ListView supports app body scrolling when the app is run on a small device.
+
+# 반응형 flutter 앱 만들기
+
+1. LayoutBuilder 클래스 사용
+2. build functions 내에서 MediaQuery.of 메서드 사용
+
+- Other useful widgets and classes for creating a responsive UI:
+  - AspectRatio
+  - CustomSingleChildLayout
+  - CustomMultiChildLayout
+  - FittedBox
+  - FractionallySizedBox
+  - LayoutBuilder
+  - MediaQuery
+  - MediaQueryData
+  - OrientationBuilder
+
+참고: https://docs.flutter.dev/development/ui/layout/adaptive-responsive
+
+# Stack 위젯
+
+위젯 리스트를 가지고 밑에서부터 형성
+
+```dart
+Stack(
+  children: <Widget>[
+    myGrayBox,
+    myRedBox,
+    Positioned(
+      bottom: 0,
+      right: 0,
+      child: myGreenBox,
+    ),
+    myBlueBox,
+    myYellowBox,
+  ]
+)
+```
+
+- Positioned 속성을 사용하면 Stack 내에서 특정 하위 요소에 특정 위치를 지정할 수 있습니다.
+
+```dart
+Stack(
+  children: <Widget>[
+    myGrayBox,
+    Positioned(
+      bottom: -50,
+      right: -50,
+      child: myBlueBox,,
+    ),
+  ],
+  overflow: Overflow.visible,
+)
+```
+
+- 가끔은 Stack 의 경계선 밖으로 하위 위젯을 밀어내기도 합니다.
+- Overflow 속성을 이용해서 경계선을 벗어날지 말지를 설정해줄 수도 있습니다.
+
+# ListView 위젯
+
+```dart
+ListView(
+  children: [item1, item2, item3],
+  scrollDirection: Axis.vertical,
+  <!-- physics: NeverScrollableScrollPhysics(), -->
+  <!-- addAutomaticKeepAlives: false, -->
+  <!-- casheExtent: 100.0, -->
+);
+```
+
+- addAutomaticKeepAlives: 동작 제어
+- casheExtent: 화면 밖 수단 제어
+
+```dart
+ListView.builder(
+  itemBuilder: (_, index) =>
+    Text('Item $index'),
+);
+```
+
+- ListView.builder: 쉽게 만들어지는 긴 항목 리스트나 동적으로 제작되는 항목 리스트 만들기
