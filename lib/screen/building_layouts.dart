@@ -10,22 +10,19 @@ class BuildingLayouts extends StatelessWidget {
         title: const Text('Flutter layout demo'),
       ),
       body: Container(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [const TitleWidget(), ButtonSection(), TextBox()])),
+          padding: EdgeInsets.all(10),
+          child: Column(children: [
+            const TitleWidget(),
+            ButtonSection(),
+            Container(
+                child: Text(
+                    'sjkfldjsflsjdflksdjflkdsjlfgkjsdlfjsdlkjfsdklfjlskadjflskaffsjflsdahfsdhafsdafssdfsdhflsdfhlsdifhsdldhflishlfi'))
+          ])),
     );
-  }
-
-  Container TextBox() {
-    return Container(
-        width: 200,
-        child: Text(
-            'sjkfldjsflsjdflksdjflkdsjlfgkjsdlfjsdlkjfsdklfjlskadjflskaffsjflsdahfsdhafsdafssdfsdhflsdfhlsdifhsdldhflishlfi'));
   }
 
   Container ButtonSection() {
     return Container(
-      width: 250,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Column(children: [
           Padding(
@@ -58,12 +55,12 @@ class TitleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
+      // width: 280,
       child: Row(
         children: [
           Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              // mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Oeschinen Lake Campground'),

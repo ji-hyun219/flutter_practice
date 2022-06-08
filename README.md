@@ -55,3 +55,57 @@ When the Flexible widget wraps a widget, the widget becomes the Flexible widget�
 MainAxisSize.min 와 MainAxisAlignment 같이 사용할 시
 적용이 되지 않았다.
 MainAxisSize.min 을 해제해야 함
+
+- 실무에서는 MainAxisSize.min 안씀(폰 기종마다 너비 값이 다르기 때문) -> padding 사용 권장!
+
+## 3. Building Layouts
+
+참고: https://docs.flutter.dev/development/ui/layout/tutorial
+
+피드백 내용은 아래와 같습니다.
+
+```dart
+body: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(children: [
+            const TitleWidget(),
+            ButtonSection(),
+            Container(
+                child: Text(
+                    'sjkfldjsflsjdflksdjflkdsjlfgkjsdlfjsdlkjfsdklfjlskadjflskaffsjflsdahfsdhafsdafssdfsdhflsdfhlsdifhsdldhflishlfi'))
+          ])),
+```
+
+- 이렇게 먼저 padding 값을 주고 시작합니다.
+- width 값은 되도록이면 사용하지 않습니다.
+
+```dart
+Widget build(BuildContext context) {
+    return Container(
+      // width: 280,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              // mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Oeschinen Lake Campground'),
+                Text(
+                  'Kandersteg, Switzerland',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.star, color: Colors.red),
+          Text('41'),
+        ],
+      ),
+    );
+  }
+}
+```
+
+- 주석 처리한 부분은 기존의 코드입니다.
+- 주석 처리한 부분은 사용하지 말아야 할 코드입니다.
