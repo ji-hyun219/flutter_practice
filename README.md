@@ -195,3 +195,140 @@ ListView.builder(
 ```
 
 - ListView.builder: 쉽게 만들어지는 긴 항목 리스트나 동적으로 제작되는 항목 리스트 만들기
+
+# Stateful Widget
+
+종종 상위 위젯이 상태를 관리하고 하위 위젯에 업데이트 시기를 알리는 것이 가장 합리적이다.
+
+해당 예에서는 TapboxB 는 콜백을 통해 해당 상태를 부모로 내보냅니다.
+TapboxB 는 상태를 관리하지 않기 때문에 StatelessWidget 을 가집니다.
+
+- 부모 위젯:
+
+  - TapboxB 의 \_active state 를 관리
+  - \_handleTapboxChanged() 상태를 탭할 때 호출되는 메서드를 구현
+  - setState() 상태가 변경되면 UI 업데이트를 호출
+
+- 자식 위젯(TapboxB):
+
+  - 모든 상태가 부모에 의해 처리되기 때문에 StatelessWidget 을 확장
+  - 탭이 감지되면 부모에게 알림
+
+# Dart has two types of optional parameters:
+
+1. named
+2. positional
+
+## 먼저, optional parameter 란 (named 와 positional 공통사항)
+
+1. 호출자가 함수를 호출할 때 매개변수의 값을 지정할 필요가 없다는 점에서 선택사항
+2. optional parameter 는 필수 매개변수 뒤에만 선언할 수 있다.
+3. optional parameter 는 호출자가 값을 지정하지 않을 때 사용되는 기본값을 가질 수 있다.
+
+## posional optional parameters
+
+A parameter wrapped by [] is a `postional optional parameter`.
+
+```dart
+getHttpUrl(String server, String path, [int port=80]) {
+  // ...
+}
+```
+
+You can call getHttpUrl with or without the third parameter.
+
+```dart
+getHttpUrl('example.com', '/index.html', 8080); // port == 8080
+getHttpUrl('example.com', '/index.html');       // port == 80
+```
+
+만약 아래와 같은 경우라면?
+
+```dart
+getHttpUrl(String server, String path, [int port=80, int numRetries=3]) {
+  // ...
+}
+```
+
+위의 optional parameter 들은 `positional` 이다.
+왜냐하면 port 는 생략할 수 없기 때문이다.
+
+## Named oprional parameters
+
+A parameter wrapped by { } is a `named optional parameter`.
+
+```dart
+getHttpUrl(String server, String path, {int port = 80}) {
+  // ...
+}
+```
+
+getHttpUrl 함수를 호출할 때 third parameter 를 생략하거나 생략 없이 호출할 수 있다.
+생략 없이 함수를 호출할 때는 아래와 같이 매개변수 이름을 사용해야 한다.
+
+```dart
+getHttpUrl('example.com', '/index.html', port: 8080); // port == 8080
+getHttpUrl('example.com', '/index.html');             // port == 80
+```
+
+아래와 같이 함수에 대해 여러 명명된 매개변수를 지정할 수 있다.
+
+```dart
+getHttpUrl(String server, String path, {int port = 80, int numRetries = 3}) {
+  // ...
+}
+```
+
+다음과 같이 사용할 수 있다.
+
+```dart
+getHttpUrl('example.com', '/index.html');
+getHttpUrl('example.com', '/index.html', port: 8080);
+getHttpUrl('example.com', '/index.html', port: 8080, numRetries: 5);
+getHttpUrl('example.com', '/index.html', numRetries: 5, port: 8080);
+getHttpUrl('example.com', '/index.html', numRetries: 5);
+```
+
+## named parameter 와 positional parameter 를 같이 쓰고 싶다면?
+
+```dart
+void main() {
+  int result = addNumbers(1, z: 2, y: 1);
+  print(result);
+}
+
+int addNumbers(int x, {required int y, int z = 10}) {
+  int sum = x + y + z;
+
+  return sum;
+}
+```
+
+# 부모, 자식 간의 위젯 상태관리
+
+```dart
+// 부모 위젯
+Widget build(BuildContext context) {
+    return SizedBox(
+      child: TapboxB(
+        active: _active,
+        onChanged: _handleTapboxChanged,
+      ),
+    );
+  }
+
+// 자식 위젯
+class TapboxB extends StatelessWidget {
+  const TapboxB({
+    super.key,
+    this.active = false,
+    required this.onChanged,
+  });
+
+  final bool active;
+  final ValueChanged<bool> onChanged;
+
+  void _handleTap() {
+    onChanged(!active);
+  }
+```
