@@ -332,3 +332,67 @@ class TapboxB extends StatelessWidget {
     onChanged(!active);
   }
 ```
+
+# Navigator
+
+https://api.flutter.dev/flutter/widgets/Navigator-class.html
+
+- 스택 규칙을 사용하여 하위 위젯 세트를 관리하는 위젯입니다.
+- 네비게이터는 `Route` 객체 스택을 관리하고 스택 관리를 위한 두가지 방법인 선언적 API `Navigator.pages` 또는
+  명령적 API `Navigator.push` 및 `Navigator.pop` 을 제공합니다.
+- Android와 같은 특정 플랫폼에서 시스템 UI는 사용자가 애플리케이션 스택의 이전 경로로 다시 이동할 수 있도록 하는 뒤로 버튼(애플리케이션 범위 밖)을 제공합니다. 이 기본 제공 탐색 메커니즘이 없는 플랫폼에서 AppBar (일반적으로 Scaffold.appBar 속성에서 사용됨)를 사용하면 사용자 탐색을 위한 뒤로 버튼을 자동으로 추가할 수 있습니다.
+
+## 1. Displaying a full-screen route
+
+- `MaterialApp 의 home` 은 `Navigator 스택의 맨 아래에 있는 경로`가 됩니다.
+- 스택의 새 경로를 푸시하려면 화면에 표시하려는 모든 것을 생성하는 빌더 함수로 `MaterialPageRoute` 의 인스턴스를
+  생성할 수 있습니다.
+- 라우트는 푸시 및 팝업 시점에 따라 다른 context 에서 빌드 및 재빌드되기 때문에 하위 위젯 대신 `builder function`을 사용하여 위젯을 정의합니다.
+- 아래와 같이 새 경로가 팝업되어 Navigator 의 pop 메서드를 사용하여 앱의 홈 페이지가 표시됩니다.
+
+```dart
+Navigator.pop(context);
+```
+
+- Scaffold 는 AppBar 에 '뒤로' 버튼을 자동으로 추가하기 때문에 일반적으로 Scaffold 가 있는 경로의 네이게이터를 표시하는 위젯을 제공할 필요가 없습니다.
+- `뒤로 버튼을 누르면 Navigator.pop 이 호출`됩니다.
+- Android 에서는 시스템 '뒤로 버튼'을 눌러도 동일한 작업을 수행합니다.
+
+## 2. Using named navigator routes
+
+- MaterialApp 은 경로 이름에서 경로를 생성할 빌더 함수로 매핑하는 Map<String, WidgetBuilder> 로 생성할 수 있습니다.
+- named 방식으로 경로를 표시하려면:
+
+```dart
+Navigator.pushNamed(context, '/b');
+```
+
+## 경로는 값을 반환할 수 있습니다
+
+- 사용자에게 값을 요청하기 위해 경로가 푸시되면 pop 메서드의 결과를 통해 값(여기선 true)을 반환할 수 있습니다.
+- 경로를 푸시하는 메서드는 Future 를 반환합니다.(await 사용 이유)
+- Future 는 경로가 팝업되고 Future 의 값이 pop 메소드의 result 매개변수일 때 확인됩니다.
+
+```dart
+bool value = await Navigator.push(context, MaterialPageRoute<bool>(
+  builder: (BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        child: Text('OK'),
+        onTap: () { Navigator.pop(context, true); }
+      ),
+    );
+  }
+));
+```
+
+- 사용자가 '확인'을 누르면 값이 true 가 됩니다.
+- 뒤로 버튼을 눌러 경로를 벗어나면 값이 null 이 됩니다.
+
+## 팝업 경로
+
+- `경로가 전체 화면을 가리지 않아도 됩니다.`
+- `PopupRoute` 는 현재 화면이 통과할 수 있도록 부분적으로만 불투명할 수 있는 `ModalRoute.barrierColor` 로 화면을 덮습니다.
+- 팝업 경로는 아래 위젯에 대한 입력을 차단하기 때문에 `모달`입니다.
+- 팝업 경로를 생성하고 보여주는 기능이 있습니다. (예: showDialog, showMenu, showModalBottomSheet)
+- `PopupMenuButton` 및 `DropdownButton` 과 같이 팝업 경로를 생성하는 위젯도 있습니다. 이러한 위젯은 PopupRoute 의 내부 하위 클래스를 만들고 `Navigator 의 push, pop 메서드`를 사용하여 표시 및 해제합니다.
