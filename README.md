@@ -396,3 +396,7 @@ bool value = await Navigator.push(context, MaterialPageRoute<bool>(
 - 팝업 경로는 아래 위젯에 대한 입력을 차단하기 때문에 `모달`입니다.
 - 팝업 경로를 생성하고 보여주는 기능이 있습니다. (예: showDialog, showMenu, showModalBottomSheet)
 - `PopupMenuButton` 및 `DropdownButton` 과 같이 팝업 경로를 생성하는 위젯도 있습니다. 이러한 위젯은 PopupRoute 의 내부 하위 클래스를 만들고 `Navigator 의 push, pop 메서드`를 사용하여 표시 및 해제합니다.
+
+# GetX
+
+참고: https://sudarlife.tistory.com/entry/%EC%83%81%ED%83%9C%EA%B4%80%EB%A6%AC%EC%9D%98-%EB%81%9D%ED%8C%90%EC%99%95-GetX%EB%A5%BC-%EC%A0%95%EB%A6%AC%ED%95%B4-%EB%B3%B4%EC%95%98%EB%8B%A4
