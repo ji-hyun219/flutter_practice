@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/screen/home_screen.dart';
-import 'package:my_app/screen/business_card.dart';
-import 'package:my_app/screen/building_layouts.dart';
-import 'package:my_app/screen/tapboxA.dart';
-// import 'package:my_app/screen/tapboxB.dart';
-import 'package:my_app/screen/tapboxC.dart';
-import 'package:my_app/screen/getx.dart';
+import 'package:my_app/pages/home_screen.dart';
+import 'package:my_app/pages/business_card.dart';
+import 'package:my_app/pages/building_layouts.dart';
+import 'package:my_app/pages/tapboxA.dart';
+// import 'package:my_app/pages/tapboxB.dart';
+import 'package:my_app/pages/tapboxC.dart';
+import 'package:my_app/pages/getx.dart';
 import 'package:get/get.dart';
 
 // project_name/lib 경로를 기준으로 설정한다.
@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
-    GetMaterialApp(
+    const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Home(),
     ),

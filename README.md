@@ -400,3 +400,55 @@ bool value = await Navigator.push(context, MaterialPageRoute<bool>(
 # GetX
 
 참고: https://sudarlife.tistory.com/entry/%EC%83%81%ED%83%9C%EA%B4%80%EB%A6%AC%EC%9D%98-%EB%81%9D%ED%8C%90%EC%99%95-GetX%EB%A5%BC-%EC%A0%95%EB%A6%AC%ED%95%B4-%EB%B3%B4%EC%95%98%EB%8B%A4
+
+# JSON 과 직렬화
+
+https://flutter-ko.dev/docs/development/data-and-backend/json#manual-encoding
+
+일반 JSON 디코딩은 `dart:convert` 에 탑재되어 있는 JSON 디코더를 사용하는 것을 가리킵니다.
+JSON 문자열을 `jsonDecode()` 함수에 전달한 후, 결괏값 `Map<String, dynamic>` 에서 필요한 값을 참고하면 됩니다.
+
+```dart
+Map<String, dynamic> user = jsonDecode(jsonString);
+
+print('안녕하세요, ${user['name']}님!');
+print('${user['email']}으로 인증 링크를 보냈습니다.');
+```
+
+안타깝게도, jsonDecode()는 `Map<String, dynamic>`을 돌려주어, 런타임 이전까지는 값의 자료형을 알 수 없게 됩니다. 이런 접근 방식을 사용하면, 정적 타입 언어의 기능인 타입 안전성, 자동완성, 그리고 가장 중요한 컴파일 타임 오류를 사용할 수 없게 됩니다. 이로 인해 코드는 순식간에 오류가 발생하기 쉬운 환경에 처하게 됩니다.
+
+## 모델 클래스와 JSON 직렬화
+
+- map 구조에서 새로운 User 객체를 생성하기 위한 생성자인 User.fromJson() 생성자
+- User 객체를 map 구조로 변환하기 위한 메서드인 toJson() 메서드
+
+user_model.dart
+
+```dart
+class User {
+  final String name;
+  final String email;
+
+  User(this.name, this.email);
+
+  User.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        email = json['email'];
+
+  Map<String, dynamic> toJson() =>
+    {
+      'name': name,
+      'email': email,
+    };
+}
+```
+
+디코딩 로직의 책임이 이제 모델 내부로 옮겨졌기에, 아래의 새로운 방법으로 유저를 쉽게 디코드할 수 있습니다.
+
+```dart
+Map userMap = jsonDecode(jsonString);
+var user = User.fromJson(userMap);
+
+print('안녕하세요, ${user.name}님!');
+print('${user.email}으로 인증 링크를 보냈습니다.');
+```
