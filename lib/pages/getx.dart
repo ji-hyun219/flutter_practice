@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_app/services/shape_services.dart';
 
 class Controller extends GetxController {
   var count = 0.obs;
   increment() => count++;
 
-  final width = 0.0.obs;
+  // final width = 0.0.obs;
 
-  Future<void> getShape() async {
-    final result = await ShapeService().loadShape();
-    width.value = result.property.width;
-    print('width 값: ${width.value}');
-  }
+  // Future<void> getShape() async {
+  //   final result = await ShapeService().loadShape();
+  //   width.value = result.property.width;
+  //   print('width 값: ${width.value}');
+  // }
 }
 
 class Home extends StatelessWidget {
@@ -21,7 +20,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Controller c = Get.put(Controller());
-    c.getShape();
+    // c.getShape();
 
     return Scaffold(
       // Use Obx(()=> to update Text() whenever count is changed.
