@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:my_app/pages/getx.dart';
 import 'package:get/get.dart';
-import 'package:my_app/services/address_services.dart';
+import 'package:my_app/services/product_services.dart';
 
 // project_name/lib 경로를 기준으로 설정한다.
 
@@ -19,5 +19,6 @@ void main() {
       home: Home(),
     ),
   );
-  loadAddress();
+  // loadAddress();
+  loadProduct();
 }
