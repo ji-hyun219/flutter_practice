@@ -355,3 +355,91 @@ print('${user.email}으로 인증 링크를 보냈습니다.');
    등록하거나 제거할 수 있습니다.
 
 2. `observer` 를 통해 앱의 상태가 변화되면 `didChangeAppLifecycleState` 가 호출됩니다.
+
+# super constructor
+
+```dart
+void main(){
+  var dog1 = Dog("Labrador", "Black");
+}
+
+class Animal {
+  String color;
+
+  Animal(String color) {
+    this.color = color;
+    print('Animal class constructor');
+  }
+}
+
+class Dog extends Animal {
+  String breed;
+
+  Dog(String breed, String color) : super(color){
+    this.breed = breed;
+    print('Dog class constructor');
+  }
+}
+
+```
+
+# initState
+
+State 의 하위 클래스는 한 번만 발생해야 하는 작업을 수행하기 위해
+initState 를 재정의할 수 있습니다.
+예를 들어 애니메이션을 구성하거나 플랫폼 서비스를 구독하려면
+initState 를 재정의합니다.
+initState 의 구현은 super.initState 를 호출하여
+필요합니다.
+
+상태 객체가 더 이상 필요하지 않으면 프레임워크는 상태 객체에 대해 dispose()를 호출합니다. 정리 작업을 수행하려면 dispose 함수를 재정의하십시오. 예를 들어 타이머를 취소하거나 플랫폼 서비스 구독을 취소하려면 dispose를 재정의합니다. dispose 구현은 일반적으로 super.dispose를 호출하여 종료됩니다.
+
+# StatefulWidget
+
+StatefulWidget 인스턴스는 mutable 하지 않다. StatefulWidget 인스턴스 자체는 immutable 하지만, mutable한 상태(state)를 별도로 관리한다. 상태(state)가 저장되는 곳은 State 오브젝트이며, State 오브젝트는 createState() 메소드를 통해 생성된다.
+
+```dart
+class Counter extends StatefulWidget {
+  Counter({Key? key}) : super(key: key);
+
+  @override
+  _CounterState createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  int _counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('StatefulWidget Example'),
+      ),
+      body: Center(
+        child: Text(
+          '현재 숫자: $_counter',
+        ),
+      ),
+    );
+  }
+```
+
+# 위젯 빌드 완료 시 메서드 실행
+
+1. 위젯바인딩
+
+```dart
+WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("WidgetsBinding");
+    });
+```
+
+2. 스케줄러바인딩
+
+```dart
+SchedulerBinding.instance.addPostFrameCallback((_) {
+  print("SchedulerBinding");
+});
+```
+
+내부 initState에서 호출할 수 있으며, 위젯 빌드가 렌더링을 완료한 후 둘 다 한 번만 호출됩니다.
