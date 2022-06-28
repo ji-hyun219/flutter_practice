@@ -21,117 +21,10 @@ When the Flexible widget wraps a widget, the widget becomes the Flexible widget�
 
 - fit, flex, child 속성
 
-# business_card 구현
-
-참고: https://docs.flutter.dev/codelabs/layout-basics#putting-it-all-together
-
-## 1. Icon 과 Text 정렬
-
-```dart
-     Row(
-       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.account_circle, size: 50),  // <--- child 삽입
-        ),
-        Column( ... ), // <--- The Column you first implemented
-      ],
-     );
-```
-
-- EdgeInsets 속성
-
-  - EdgeInsets.all() : padding 값 일괄 적용
-  - EdgeInsets.only() : left, right, top, bottom 의 padding 값을 선택 적용
-  - EdgeInsets.symmetric() : horizontal(left, right), vertical (top, bottom)의 padding 값을 적용
-
-- CrossAxisAlignment 속성
-  - center 가 default 값
-  - a Row's cross axis is vertical
-  - a Column's cross axis is horizontal
-
-## 2. 주소, 연락처 정렬
-
-MainAxisSize.min 와 MainAxisAlignment 같이 사용할 시
-적용이 되지 않았다.
-MainAxisSize.min 을 해제해야 함
-
-- 실무에서는 MainAxisSize.min 안씀(폰 기종마다 너비 값이 다르기 때문) -> padding 사용 권장!
-
-## 3. Building Layouts
-
-참고: https://docs.flutter.dev/development/ui/layout/tutorial
-
-피드백 내용은 아래와 같습니다.
-
-```dart
-body: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(children: [
-            const TitleWidget(),
-            ButtonSection(),
-            Container(
-                child: Text(
-                    'sjkfldjsflsjdflksdjflkdsjlfgkjsdlfjsdlkjfsdklfjlskadjflskaffsjflsdahfsdhafsdafssdfsdhflsdfhlsdifhsdldhflishlfi'))
-          ])),
-```
-
-- 이렇게 먼저 padding 값을 주고 시작합니다.
-- width 값은 되도록이면 사용하지 않습니다.
-
-```dart
-Widget build(BuildContext context) {
-    return Container(
-      // width: 280,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              // mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Oeschinen Lake Campground'),
-                Text(
-                  'Kandersteg, Switzerland',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.star, color: Colors.red),
-          Text('41'),
-        ],
-      ),
-    );
-  }
-}
-```
-
-- 주석 처리한 부분은 기존의 코드입니다.
-- 주석 처리한 부분은 사용하지 말아야 할 코드입니다.
-
-### Building Layouts final touch
+# Building Layouts final touch
 
 - Column vs ListView
   - a ListView supports app body scrolling when the app is run on a small device.
-
-# 반응형 flutter 앱 만들기
-
-1. LayoutBuilder 클래스 사용
-2. build functions 내에서 MediaQuery.of 메서드 사용
-
-- Other useful widgets and classes for creating a responsive UI:
-  - AspectRatio
-  - CustomSingleChildLayout
-  - CustomMultiChildLayout
-  - FittedBox
-  - FractionallySizedBox
-  - LayoutBuilder
-  - MediaQuery
-  - MediaQueryData
-  - OrientationBuilder
-
-참고: https://docs.flutter.dev/development/ui/layout/adaptive-responsive
 
 # Stack 위젯
 
@@ -183,9 +76,6 @@ ListView(
   <!-- casheExtent: 100.0, -->
 );
 ```
-
-- addAutomaticKeepAlives: 동작 제어
-- casheExtent: 화면 밖 수단 제어
 
 ```dart
 ListView.builder(
@@ -452,3 +342,16 @@ var user = User.fromJson(userMap);
 print('안녕하세요, ${user.name}님!');
 print('${user.email}으로 인증 링크를 보냈습니다.');
 ```
+
+# Flutter 의 Widget 에서 앱 활성화 여부 파악하기
+
+앱이 활성화될 때, 즉 백그라운드 상태에서 포그라운드 상태로 앱이 다시 올라왔을 때
+위젯이 이 상태를 직접 파악하는 방법은 기존적으로 제공되지 않습니다.
+
+- WidgetsBindings 의 observer 기능
+
+1. State 를 구현하는 예제이기 때문에 `initState` 와 `dispose` 를 통해
+   위젯이 생성되거나 사라지는 시점을 알 수 있으니 이를 이용해 `observer` 를
+   등록하거나 제거할 수 있습니다.
+
+2. `observer` 를 통해 앱의 상태가 변화되면 `didChangeAppLifecycleState` 가 호출됩니다.
