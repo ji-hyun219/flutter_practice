@@ -550,3 +550,15 @@ class _MyServiceState extends State<MyService> {
 - findNameAnEmail is an asynchronous method, so, while it's called in initState, Flutter does not wait for it to complete before build is called.
 - 그 결과, late 필드가 설정되기 전에 엑세스됩니다.
 - `빌드하기 전에 Future 완료될 때까지 기다리려면 FutureBuilder` 를 사용할 것
+
+# FutureBuilder
+
+- 데이터를 다 받기 전에 먼저 데이터가 없이 그릴 수 없는 부분을 먼저 그려주기 위해 사용이 되는 것.
+- 만약 FutureBuilder 가 없다면 데이터가 다 받아지기를 기다린 후 화면을 그리거나 데이터가 변함을 setState() 를 통해 바꾸어 주어야 할 것
+
+### connectionState
+
+- connectionState.none
+- connectionState.waiting
+- connectionState.active
+- connectionState.done
