@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 //------------------------ ParentWidget --------------------------------
 
 class ParentWidget extends StatefulWidget {
-  const ParentWidget({super.key});
+  const ParentWidget({Key? key}) : super(key: key);
 
   @override
   _ParentWidgetState createState() => _ParentWidgetState();
@@ -33,7 +33,7 @@ class _ParentWidgetState extends State<ParentWidget> {
 
 class TapboxB extends StatelessWidget {
   const TapboxB({
-    super.key,
+    key,
     this.active = false,
     required this.onChanged,
   });
@@ -50,13 +50,13 @@ class TapboxB extends StatelessWidget {
     return GestureDetector(
       onTap: _handleTap,
       child: Container(
+        width: 200.0,
+        height: 200.0,
+        decoration: BoxDecoration(color: active ? Colors.red : Colors.yellow),
         child: Center(
           child: Text(active ? 'Active' : 'Inactive',
               style: const TextStyle(fontSize: 32.0, color: Colors.white)),
         ),
-        width: 200.0,
-        height: 200.0,
-        decoration: BoxDecoration(color: active ? Colors.red : Colors.yellow),
       ),
     );
   }
