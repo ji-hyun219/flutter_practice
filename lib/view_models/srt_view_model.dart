@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:my_app/models/staking_period_model.dart';
 import 'package:my_app/services/srt_service.dart';
@@ -7,6 +9,16 @@ class SrtViewModel extends GetxController {
       StakingPeriod(termintaion: null, inProgress: null, preparation: null).obs;
   final startDate = DateTime.now().obs;
   final endDate = DateTime.now().obs;
+  Timer? timer;
+  final dayDifference = 0.obs;
+  // late
+  // 나중에 이 변수를 초기화하겠다고 약속했지만
+  // 그러나 이 약속은 빌드 메서드 내에서 해당 변수를 사용할 때 의미가 없습니다.
+  // 따라서 ? 사용
+  final hourDifference = 0.obs;
+  final minuteDifference = 0.obs;
+  final secondDifference = 0.obs; // 에러는 아니지만 null 호출
+  final isLoading = false.obs;
 
   void getStakingData() {
     final responseData = StakingService().getStakingData();
@@ -29,6 +41,28 @@ class SrtViewModel extends GetxController {
     //   endDate.value = DateTime.parse(
     //       df.format(DateTime.parse(staking.value.preparation!.endAt)));
     // }
+  }
+
+  Future stakingTimer() async {
+    try {
+      isLoading.value = true;
+      timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        secondDifference.value =
+            endDate.value.difference(DateTime.now()).inSeconds;
+
+        minuteDifference.value = (secondDifference / 60).floor();
+        hourDifference.value = (minuteDifference / 60).floor();
+        secondDifference.value = (secondDifference % 60).floor();
+        minuteDifference.value = (minuteDifference % 60).floor();
+        dayDifference.value = (hourDifference / 24).floor();
+        hourDifference.value = (hourDifference % 24).floor();
+      });
+      return timer;
+    } catch (e) {
+      return;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override
