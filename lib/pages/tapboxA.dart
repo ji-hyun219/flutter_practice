@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 // stful - 단축 명령어
 class TapboxA extends StatefulWidget {
-  const TapboxA({super.key});
+  const TapboxA({Key? key}) : super(key: key);
 
   @override
   State<TapboxA> createState() => _TapboxAState();
@@ -24,22 +24,22 @@ class _TapboxAState extends State<TapboxA> {
     return GestureDetector(
         onTap: _handleTap,
         child: Container(
-          child: Center(
-              child: Text(
-            _active ? 'Active' : 'Inactive',
-            style: const TextStyle(fontSize: 32.0, color: Colors.white),
-          )),
           width: 200.0,
           height: 200.0,
           decoration: BoxDecoration(
             color: _active ? Colors.lightGreen[700] : Colors.grey[600],
           ),
+          child: Center(
+              child: Text(
+            _active ? 'Active' : 'Inactive',
+            style: const TextStyle(fontSize: 32.0, color: Colors.white),
+          )),
         ));
   }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

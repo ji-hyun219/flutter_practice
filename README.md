@@ -443,3 +443,110 @@ SchedulerBinding.instance.addPostFrameCallback((_) {
 ```
 
 내부 initState에서 호출할 수 있으며, 위젯 빌드가 렌더링을 완료한 후 둘 다 한 번만 호출됩니다.
+
+# The instance member '...' can't be accessed in an initializer.
+
+- 플러터로 개발하면서 자주 마주치는 에러
+- `class 내에서 initializer 선언하고 이를 접근할 때 발생하는 에러`이다
+
+즉, initState() 내의 변수에 호출된 함수의 값을 받아오더라도 변수에 대한 실제 사용을 위한
+어떤 행동이나 다른 변수에 값을 넣는 등의 행위는 위처럼 `build() 내`에서 하여야 한다.
+
+```dart
+class _MyGameState extends State<MyGame> {
+  int _numberOfTeams = 4;
+
+  List<int> _teamPoints = List.filled(_numberOfTeams, 0);
+}
+```
+
+메소드가 아닌 객체 내부에 있기 때문에 속성이 아직 초기화되지 않았을 수 있으므로 생성할 다른
+속성 \_numberOfTeams, \_teamPoints 에 의존할 수 없습니다.
+
+### 해결 방법
+
+1. 속성을 static 으로 만들기
+   종속 값을 정적으로 만듭니다
+
+```dart
+static int _numverOfTeams = 4;
+```
+
+2. 클래스 내부에서 초기화 목록을 사용할 수 있는 경우
+
+```dart
+class TeamList {
+  int _numberOfTeams;
+  List<int> _teamPoints;
+
+  TeamList(
+    this._numberOfTeams,
+  ) : _teamPoints = List.filled(_numberOfTeams, 0);
+}
+
+```
+
+3. State 내부에서 initState override 하는 경우
+
+```dart
+class _HomeState extends State<Home> {
+  int _numberOfTeams = 4;
+
+  late List<int> _teamPoints;
+
+  @override
+  void initState() {
+    super.initState();
+    _teamPoints = List.filled(_numberOfTeams, 0)
+  }
+}
+```
+
+여전히 객체 내부 상태의 인스턴스이기 때문에 2 또는 3을 추천합니다.
+생성을 약간 미루면 됩니다.
+https://dart.dev/tools/diagnostic-messages#implicit_this_reference_in_initializer
+
+# Late Error
+
+### LateInitializationError
+
+```dart
+class MyService extends StatefulWidget {
+  @override
+  _MyServiceState createState() => _MyServiceState();
+}
+
+class _MyServiceState extends State<MyService> {
+  late String name, email;
+  Widget currentWidget = BackgroundBetcher();
+
+  @override
+  void initState() {
+    super.initState();
+    findNameAnEmail();
+  }
+
+  Future<Null> findNameAnEmail() async {
+    await Firebase.initializeApp().then((value) async {
+      FirebaseAuth.instance.authStateChanges().listen((event) {
+        setState(() {
+          name = event!.displayName!;
+          email = event.email!;
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyStyle().primaryColor,
+      ),
+```
+
+- name 필드가 초기화되지 않았습니다.
+- 이 에러가 나는 이유는 findNameAnEmail 는 비동기식 메서드이므로 initState 에서 호출되는 동안 Flutter 는 완료되는 것을 기다리지 않습니다. (build 가 불리기 전에)
+- findNameAnEmail is an asynchronous method, so, while it's called in initState, Flutter does not wait for it to complete before build is called.
+- 그 결과, late 필드가 설정되기 전에 엑세스됩니다.
+- `빌드하기 전에 Future 완료될 때까지 기다리려면 FutureBuilder` 를 사용할 것
