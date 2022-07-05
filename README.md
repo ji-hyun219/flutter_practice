@@ -562,3 +562,55 @@ class _MyServiceState extends State<MyService> {
 - connectionState.waiting
 - connectionState.active
 - connectionState.done
+
+# showDialog
+
+```dart
+showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: new Text("Alert Dialog title"),
+      content: new Text("Alert Dialog body"),
+      actions: <Widget>[
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+    )
+  },
+  barrierDismissible: false, // 여백을 눌러도 닫히지 않기
+);
+```
+
+# The argument type 'List<dynamic>' can't be assigned to the parameter type 'List<Widget>'
+
+```dart
+Widget build(BuildContext context) {
+return Scaffold(
+  appBar: AppBar(title: const Text('DeliMeals')),
+  body: GridView(
+    children: DUMMY_CATEGORIES
+        .map((categoryData) => CategoryItem(   //getting
+              categoryData.title,             //the error
+              categoryData.color,            //here
+            ))
+        .toList(),
+```
+
+위와 같은 코드는 에러가 난다.
+다음과 같이 해결하면 좋다.
+
+specify the type of the map `map<Widget>`
+
+```dart
+DUMMY_CATEGORIES
+        .map<Widget>((categoryData) => CategoryItem(
+              categoryData.title,
+              categoryData.color,
+            ))
+        .toList(),
+```
