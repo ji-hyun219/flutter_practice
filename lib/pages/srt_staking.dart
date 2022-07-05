@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_app/view_models/srt_view_model.dart';
+import 'package:my_app/pages/srt_withdraw.dart';
 
 class SrtStaking extends StatefulWidget {
   const SrtStaking({Key? key}) : super(key: key);
@@ -99,6 +100,7 @@ class _SrtStakingState extends State<SrtStaking> {
                       )
                     ],
                   ),
+                  const SrtWithdraw(),
                 ]),
         ),
       ),
