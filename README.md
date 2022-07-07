@@ -614,3 +614,184 @@ DUMMY_CATEGORIES
             ))
         .toList(),
 ```
+
+# 딥링크
+
+./android/app/src/main/AndroidManifest.xml에서 `kakao{카카오 네이티브 앱키}`가 `Scheme`이 되고, `kakaolink`가 `Path`가 된다. Scheme은 카카오 자체에서 URI 스킴이 겹치지 않게 랜덤으로 배정해주므로 중복될 걱정이 없다. 만약, 카카오 링크 없이 딥링크만을 원하면 아래의 `<data ~ />`에 원하는 값들을 집어넣으면 된다.
+
+# 핫리로드
+
+앱을 처음부터 다시 시작하지 않고 새로운 코드 변경에 따른 코드 변경 사항만 표시하며 변경된 코드에만 적용한다.
+Flutter 의 핫 리로드 기능은 개발자가 빠르고 간단하게 테스트하고, UI를 빌드하고, 버그를 고치는 것에 도움을 준다.
+
+- 핫 리로드는 가상 머신에 변경된 코드를 불러오고 위젯 트리를 재빌드한다.
+- 이때 앱의 상태를 보존하기 때문에 main() 이나 initState() 를 재실행하지 않는다.
+
+### 핫 리로드가 적용되지 않는 예외
+
+- 앱이 죽으면 핫 리로드를 사용할 수 없다.
+
+# Deep Link 와 Dynamic Links 의 개념 및 차이점
+
+## Deep Link
+
+Deep Link 는 앱에서만 쓰이는 단어가 아니며 웹도 함께 포함한다.
+하지만 일반적으로 앱에서 Deep Link 란 용어를 많이 사용하며, 해당 용어는 일반적으로 검색 가능하거나 특정 웹 컨텐츠로 연결된 하이퍼링크를 사용하는 것이다.
+즉, 특정 컨텐츠로 연결된 하이퍼링크를 의미한다.
+
+## Dynamic Links
+
+Dynamic Links 는 `Firebase 에서 제공되는 서비스`로 이것이 Deep Link 를 의미하지 않는다.
+어디까지나 Deep Link 를 포함하는 개념으로 보다 포괄적인 상황을 다루고 있다.
+
+동적 링크는 `앱 설치 여부에 관계 없이 앱으로 연결되는 딥링크`이다.
+
+### 동적 링크 매개변수
+
+- link: 앱에서 열리는 링크입니다. 앱이 처리할 수 있는 URL(일반적으로 앱의 콘텐츠 또는 페이로드)을 지정할 수 있으며, 이를 통해 사용자에게 쿠폰을 지급하거나 시작 화면을 표시하는 등 앱의 특정 로직을 시작할 수 있습니다. 이 링크는 올바른 형식의 URL이어야 하며, 적절한 URL 인코딩을 적용해야 합니다. HTTP 또는 HTTPS를 사용해야 하며 다른 동적 링크가 아니어야 합니다.
+
+# 앱 번들
+
+app bundle 은 말 그대로 app 묶음입니다.
+
+이전에는 앱은 "하나의 apk 파일로 압축되어 배포된다" 의 개념이었다면 app bundle 은 "여러 개의 분할된 apk 가 필요에 따라 구성되어 하나의 앱으로 동작한다"의 개념입니다.
+
+따라서 앱이 동작함에 있어 필요한 전체 구성요소들을 하나로 묶어서 배포하며, 실제 apk 가 Google play 를 통해 설치될 때, 전체 구성요소 중 해당 단말에 최적화된 구성으로만 정리하여
+앱이 설치됩니다.
+
+# 파이어베이스 설치
+
+Flutter 에서 Firebase 와 관련된 서비스들을 이용하기 위해선 몇가지 설정이 필요한데 과거엔 매우 복잡했으나 발전을 거듭하여 CLI 이용하여 커맨드에 따라 실행하면 완료되도록 이와 관련된 설정이 매우 편해졌다.
+
+다음 공식 문서 참고
+https://firebase.google.com/docs/cli#setup_update_cli
+
+1. 자동 설치 스크립트를 사용하여 Firebase CLI 를 설치하려면 다음 단계를 따르세요
+
+- curl -sL https://firebase.tools | bash
+  이 스크립트는 운영체제를 자동으로 감지하고 최신 Firebase CLI 릴리스를 다운로드한 다음 디렉터리에 관계없이 사용 가능한 firebase 명령어를 사용 설정합니다.
+- firebase 명령어가 활성화되는 것을 볼 수 있었다.
+
+2. 계속해서 로그인하여 CLI 를 테스트합니다
+
+- firebase login
+- 이 명령어는 로컬 머신을 Firebase 에 연결하고 Firebase 프로젝트에 대한 액세스 권한을 부여합니다.
+
+3. Allow Firebase to collect CLI usage and error reporting information?
+
+- Y 를 누르면 새로운 창이 뜨며 로그인을 하면 된다.
+
+4. Firebase 프로젝트를 나열하여 CLI 가 올바르게 설치되었고 사용자 계정에 액세스하는지 테스트 합니다. 다음 명령어를 실행합니다.
+
+- firebase projects:list
+
+4. Firebase CLI Login Successful!
+
+# 짧은 Dynamic Links 생성
+
+```dart
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
+Future<String> getShortLink(String screenName, String id) async {
+  String dynamicLinkPrefix = 'https://example.app/share';
+  final dynamicLinkParams = DynamicLinkParameters(
+    uriPrefix: dynamicLinkPrefix, // uriPrefix: 설정한 도메인에 해당
+    link: Uri.parse('$dynamicLinkPrefix/$screenName?id=$id'),
+    // link: 도메인을 통해 특정 컨텐츠에 접근하기 위한 URL 을 설정하면 된다.
+    // 예시
+    // link: Uri.parse('$dynamicLinkPrefix/$screenName?id=$id'),
+    // 1. 스크린 이름을 하위 path 로 설정
+    // 2. 각각의 id 별로 다른 화면을 보여주기 위하여 id란 이름의 쿼리 파라미터를 설정
+    androidParameters: const AndroidParameters(
+      packageName: packageName,
+      minimumVersion: 0,
+    ),
+    iosParameters: const IOSParameters(
+      bundleId: packageName,
+      minimumVersion: '0',
+    ),
+  );
+  final dynamicLink =
+      await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
+
+  return dynamicLink.shortUrl.toString();
+}
+```
+
+그 후 생성된 링크를 공유할 시, 아래 라이브러리의 도움을 받아 손쉽게 목적을 달성할 수 있다.
+-> `flutter pub add share_plus`
+
+# No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+
+2020년 8월 17일부터 시작
+모든 Firebase 버전이 업데이트되었으며 이제 Firebase 제품을 사용하기 전에 다음과 같이 호출해야 합니다.
+`Firebase.initializeApp()`
+
+먼저 모든 firebase 제품은 이제 `firebase_core 버전(0.5.0 이상)`에 종속되므로 `pubspec.yaml 파일에 추가`해야 합니다.
+`firebase_core : ^0.5.0`
+
+## 첫번째 예
+
+```dart
+import 'package:flutter/material.dart';
+
+// Import the firebase_core plugin
+import 'package:firebase_core/firebase_core.dart';
+
+void main() {
+  runApp(App());
+}
+
+class App extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      // Initialize FlutterFire
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return SomethingWentWrong();
+        }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MyAwesomeApp();
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return Loading();
+      },
+    );
+  }
+}
+```
+
+## 두번째 예
+
+initState() 에서 초기화한 후 setState() 를 호출. 이것은 build 메서드를 호출할 것이다.
+
+```dart
+@override
+  void initState() {
+    super.initState();
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      setState(() {});
+    });
+  }
+```
+
+## 세번째 예
+
+WidgetsFlutterBinding.ensureInitialized() 를 부른 후 main() 메서드 안에서 초기화해라
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+```
+
+모든 예시에서 알아두어야 할 것은 `you only have to call initializeApp() once`
