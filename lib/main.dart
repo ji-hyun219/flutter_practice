@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/dynamic_link.dart';
+import 'package:my_app/pages/lottie.dart';
+// import 'package:my_app/pages/dynamic_link.dart';
 // import 'package:my_app/pages/srt_staking.dart';
 
 // project_name/lib 경로를 기준으로 설정한다.
@@ -17,7 +18,8 @@ void main() {
     const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
-      home: DynamicLink(),
+      // home: DynamicLink(),
+      home: LottiePage(),
     ),
   );
   // loadAddress();
