@@ -875,3 +875,14 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   }
 }
 ```
+
+# 전환되는 페이지로부터 데이터 받기
+
+두번째 페이지에서 첫번째 페이지로 데이터 전달
+
+```dart
+var value = await Get.to(SecondPage());
+
+// 그리고 두번째 페이지에서 데이터를 전달
+Get.back(result: value)
+```
