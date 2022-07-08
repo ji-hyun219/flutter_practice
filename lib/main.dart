@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/get_to_result.dart';
+import 'package:my_app/pages/get_to_result2.dart';
 // import 'package:my_app/pages/lottie.dart';
 // import 'package:my_app/pages/dynamic_link.dart';
 // import 'package:my_app/pages/srt_staking.dart';
@@ -20,7 +20,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
       // home: DynamicLink(),
-      home: FirstPage(),
+      home: ThirdPage(),
     ),
   );
   // loadAddress();
