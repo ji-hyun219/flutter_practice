@@ -2,30 +2,6 @@
 
 flutter 연습 공간
 
-# flutter setting
-
-1. development/flutter 에 sdk 설치
-2. vi ~/.zshrc
-3. export PATH="$PATH:$HOME/development/flutter/bin"
-4. echo $HOME (HOME 환경변수 확인)
-5. echo $PATH (PATH 환경변수 확인)
-6. which flutter
-7. sudo softwareupdate --install-rosetta --agree-to-license
-8. IOS setup -> xcode 설치
-9. Android setup -> android studio
-
-# Flexible
-
-The Flexible widget wraps a widget, so the widget becomes resizable.
-When the Flexible widget wraps a widget, the widget becomes the Flexible widget’s child and is considered flexible.
-
-- fit, flex, child 속성
-
-# Building Layouts final touch
-
-- Column vs ListView
-  - a ListView supports app body scrolling when the app is run on a small device.
-
 # Stack 위젯
 
 위젯 리스트를 가지고 밑에서부터 형성
@@ -286,10 +262,6 @@ bool value = await Navigator.push(context, MaterialPageRoute<bool>(
 - 팝업 경로는 아래 위젯에 대한 입력을 차단하기 때문에 `모달`입니다.
 - 팝업 경로를 생성하고 보여주는 기능이 있습니다. (예: showDialog, showMenu, showModalBottomSheet)
 - `PopupMenuButton` 및 `DropdownButton` 과 같이 팝업 경로를 생성하는 위젯도 있습니다. 이러한 위젯은 PopupRoute 의 내부 하위 클래스를 만들고 `Navigator 의 push, pop 메서드`를 사용하여 표시 및 해제합니다.
-
-# GetX
-
-참고: https://sudarlife.tistory.com/entry/%EC%83%81%ED%83%9C%EA%B4%80%EB%A6%AC%EC%9D%98-%EB%81%9D%ED%8C%90%EC%99%95-GetX%EB%A5%BC-%EC%A0%95%EB%A6%AC%ED%95%B4-%EB%B3%B4%EC%95%98%EB%8B%A4
 
 # JSON 과 직렬화
 
@@ -795,3 +767,111 @@ void main() async {
 ```
 
 모든 예시에서 알아두어야 할 것은 `you only have to call initializeApp() once`
+
+# 로티
+
+lottie 를 이용하기 위해서는 StatefulWidget 이어야 합니다.
+stateless 도 가능하지만 애니메이션 컨트롤을 위함입니다.
+
+## 간단한 애니메이션
+
+- 이 예제는 가장 간단한 방법으로 Lottie 애니메이션을 표시하는 방법을 보여줍니다.
+- 위젯은 Lottie json 파일을 로드하고 애니메이션을 무기한 실행합니다.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: ListView(
+          children: [
+            // Load a Lottie file from your assets
+            Lottie.asset('assets/LottieLogo1.json'),
+
+            // Load a Lottie file from a remote url
+            Lottie.network(
+                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
+
+            // Load an animation and its images from a zip file
+            Lottie.asset('assets/lottiefiles/angel.zip'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## 사용자 지정 AnimationController
+
+- 사용자 지정 AnimationController 을 사용하면 다양한 방식으로 애니메이션을 재생할 수 있는 풍부한 API 가 있습니다.
+  원할 때 애니메이션 시작 및 중지, 앞으로 또는 뒤로 재생, 특정 지점 간 반복...
+- 티커는 플러터가 특별히 제공하는 기능으로, 티커는 애니메이션이 진행되는 동안 내부 로직을 담당한다.
+- 매 프레임마다 객체에 알림을 줄 때 티커를 사용한다.
+- 플러터는 초당 60프레임을 그린다.
+- 티커는 이름에서도 알 수 있듯이 티커는 매 프레임을 시계의 초침처럼 '틱' 으로 사용한다는 사실만 이해하면 쉽다.
+- TikerProvider 클래스는 이름에서도 알 수 있듯이 위젯에 티커를 제공하며, 이를 이용하면 직접 티커를 다루지 않아도 된다.
+- StatefulWidget 에서 State 클래스를 상속 받으며 with 로 TickerProviderStateMixin 을 가져오는 방법으로 TickerProvider 를 사용한다.
+- 이렇게 상태를 갖는 위젯은 매 프레임마다 알림을 받을 수 있다.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: ListView(
+          children: [
+            Lottie.asset(
+              'assets/LottieLogo1.json',
+              controller: _controller,
+              onLoaded: (composition) {
+                // Configure the AnimationController with the duration of the
+                // Lottie file and start the animation.
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
