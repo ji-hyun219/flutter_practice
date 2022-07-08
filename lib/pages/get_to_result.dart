@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_app/models/routing_from_model.dart';
 
+// 전환되는 페이지로부터 데이터 받기
+
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key}) : super(key: key);
 
