@@ -889,6 +889,8 @@ Get.back(result: value)
 
 # widget 객체
 
+https://stackoverflow.com/questions/50428708/pass-statefulwidget-data-to-the-state-class-without-using-constructor
+
 GoodStorageWidget get widget
 package:flutter/src/widgets/framework.dart
 
