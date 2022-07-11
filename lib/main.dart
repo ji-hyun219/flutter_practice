@@ -20,7 +20,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
       // home: DynamicLink(),
-      home: ThirdPage(),
+      home: PurchaseWidget(),
     ),
   );
   // loadAddress();
