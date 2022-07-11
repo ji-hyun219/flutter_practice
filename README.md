@@ -886,3 +886,14 @@ var value = await Get.to(SecondPage());
 // 그리고 두번째 페이지에서 데이터를 전달
 Get.back(result: value)
 ```
+
+# widget 객체
+
+GoodStorageWidget get widget
+package:flutter/src/widgets/framework.dart
+
+The current configuration.
+
+A [State] object's configuration is the corresponding [StatefulWidget] instance. This property is initialized by the framework before calling [initState]. If the parent updates this location in the tree to a new widget with the same [runtimeType] and [Widget.key] as the current configuration, the framework will update this property to refer to the new widget and then call [didUpdateWidget], passing the old configuration as an argument.
+
+[State] 개체의 구성은 해당 [StatefulWidget] 인스턴스입니다. 이 속성은 [initState]를 호출하기 전에 프레임워크에 의해 초기화됩니다. 부모가 현재 구성과 동일한 [runtimeType] 및 [Widget.key]를 가진 새 위젯으로 트리의 이 위치를 업데이트하면 프레임워크는 이 속성을 업데이트하여 새 위젯을 참조한 다음 [didUpdateWidget]을 호출하여 전달합니다. 이전 구성을 인수로 사용합니다.
