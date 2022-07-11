@@ -32,23 +32,21 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Todo')),
-        body: Container(
-          child: ListView.builder(
-              itemCount: todos.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(todos[index].title),
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => DetailScreen(todo: todos[index])),
-                    // );
-                    Get.to(() => DetailScreen(todo: todos[index]));
-                  },
-                );
-              }),
-        ));
+        body: ListView.builder(
+            itemCount: todos.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(todos[index].title),
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => DetailScreen(todo: todos[index])),
+                  // );
+                  Get.to(() => DetailScreen(todo: todos[index]));
+                },
+              );
+            }));
   }
 }
 
