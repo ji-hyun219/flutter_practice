@@ -60,9 +60,7 @@ class _GoodStorageWidgetState extends State<GoodStorageWidget> {
 }
 
 class PurchaseWidget extends StatelessWidget {
-  final RoutingFrom? from;
-
-  const PurchaseWidget({Key? key, this.from}) : super(key: key);
+  const PurchaseWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
