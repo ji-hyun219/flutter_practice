@@ -899,3 +899,13 @@ The current configuration.
 A [State] object's configuration is the corresponding [StatefulWidget] instance. This property is initialized by the framework before calling [initState]. If the parent updates this location in the tree to a new widget with the same [runtimeType] and [Widget.key] as the current configuration, the framework will update this property to refer to the new widget and then call [didUpdateWidget], passing the old configuration as an argument.
 
 [State] 개체의 구성은 해당 [StatefulWidget] 인스턴스입니다. 이 속성은 [initState]를 호출하기 전에 프레임워크에 의해 초기화됩니다. 부모가 현재 구성과 동일한 [runtimeType] 및 [Widget.key]를 가진 새 위젯으로 트리의 이 위치를 업데이트하면 프레임워크는 이 속성을 업데이트하여 새 위젯을 참조한 다음 [didUpdateWidget]을 호출하여 전달합니다. 이전 구성을 인수로 사용합니다.
+
+# 새로운 화면으로 데이터 보내기
+
+새로운 화면으로 단순히 이동하는 것뿐만 아니라 데이터를 넘겨주어야 할 때가 있습니다.
+아래와 같은 단계로 진행합니다.
+
+1. Todo 클래스를 정의합니다.
+2. Todo 리스트를 보여줍니다.
+3. Todo 에 대한 상세 정보를 보여줄 수 있는 화면을 생성합니다.
+4. 상세 화면으로 이동하면서 데이터를 전달합니다.
