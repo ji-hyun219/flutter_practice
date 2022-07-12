@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/todo_list.dart';
+import 'package:my_app/pages/animation_controller.dart';
+// import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
 // import 'package:my_app/pages/lottie.dart';
 // import 'package:my_app/pages/dynamic_link.dart';
@@ -18,12 +19,12 @@ void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
     const GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      // home: SrtStaking(),
-      // home: DynamicLink(),
-      // home: PurchaseWidget(),
-      home: TodoList(),
-    ),
+        debugShowCheckedModeBanner: false,
+        // home: SrtStaking(),
+        // home: DynamicLink(),
+        // home: PurchaseWidget(),
+        // home: TodoList(),
+        home: AnimationPage()),
   );
   // loadAddress();
   // loadProduct();

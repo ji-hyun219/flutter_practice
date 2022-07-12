@@ -815,66 +815,23 @@ class MyApp extends StatelessWidget {
 - 사용자 지정 AnimationController 을 사용하면 다양한 방식으로 애니메이션을 재생할 수 있는 풍부한 API 가 있습니다.
   원할 때 애니메이션 시작 및 중지, 앞으로 또는 뒤로 재생, 특정 지점 간 반복...
 - 티커는 플러터가 특별히 제공하는 기능으로, 티커는 애니메이션이 진행되는 동안 내부 로직을 담당한다.
-- 매 프레임마다 객체에 알림을 줄 때 티커를 사용한다.
+- `매 프레임마다 객체에 알림을 줄 때 티커를 사용`한다.
 - 플러터는 초당 60프레임을 그린다.
 - 티커는 이름에서도 알 수 있듯이 티커는 매 프레임을 시계의 초침처럼 '틱' 으로 사용한다는 사실만 이해하면 쉽다.
-- TikerProvider 클래스는 이름에서도 알 수 있듯이 위젯에 티커를 제공하며, 이를 이용하면 직접 티커를 다루지 않아도 된다.
+- `TikerProvider 클래스`는 이름에서도 알 수 있듯이 위젯에 티커를 제공하며, 이를 이용하면 직접 티커를 다루지 않아도 된다.
 - StatefulWidget 에서 State 클래스를 상속 받으며 with 로 TickerProviderStateMixin 을 가져오는 방법으로 TickerProvider 를 사용한다.
-- 이렇게 상태를 갖는 위젯은 매 프레임마다 알림을 받을 수 있다.
+- 이렇게 상태를 갖는 위젯은 `매 프레임마다 알림을 받을 수 있다`.
 
-```dart
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+### AnimationController
 
-void main() => runApp(const MyApp());
+- 애니메이션을 사용하려면 AnimationController 객체가 필요하다.
+- AnimationController 객체는 이름에서도 알 수 있듯이 애니메이션을 제어
+- AnimationController 객체는 Ticker 객체를 알고 있으므로 티커로 생기를 불어넣고 새 프레임 또는 틱이 발생할 때마다 `컨트롤러에 이를 알린다`.
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: ListView(
-          children: [
-            Lottie.asset(
-              'assets/LottieLogo1.json',
-              controller: _controller,
-              onLoaded: (composition) {
-                // Configure the AnimationController with the duration of the
-                // Lottie file and start the animation.
-                _controller
-                  ..duration = composition.duration
-                  ..forward();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-```
+- 애니메이션 컨트롤러는 애니메이션을 적용할 위젯을 알고 있으며 위젯에서 설정한 트윈값, 곡선값에 따라 `틱이 발생할 때마다 필요한 값을 계산하고 애니메이션을 진행`
+- AnimationController 클래스는 `애니메이션을 시작, 정지, 재설정, 반대로 재생, 무한 반복 등의 기능을 수행하는 메서드를 제공`
+- AnimationController 를 만드려면 `티커`와 `애니메이션 길이`(시작값과 끝값을 얼마의 시간 동안 진행해야 하는지) `두 가지 인수가 필요`
+- State 객체는 TickerProviderStateMixin 을 상속 받으므로 위젯 자체가 티커이다.
 
 # 전환되는 페이지로부터 데이터 받기
 
