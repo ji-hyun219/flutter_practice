@@ -21,11 +21,9 @@ class _AnimationPageState extends State<AnimationPage>
       vsync: this,
       // 모든 애니메이션 컨트롤러의 vsync 프로퍼티에 티커를 전달해야 한다
       // 이 예제 그리고 대부분의 상황에서는 State 객체 자신(this)이 티커다.
-      duration: const Duration(milliseconds: 1000),
+      // duration: const Duration(milliseconds: 1000),
       // 다트의 Duration 클래스로 애니메이션이 시작되고 끝날 때까지의 지속 시간을 정의한다.
     );
-
-    startAnimation();
   }
 
   @override
@@ -36,10 +34,10 @@ class _AnimationPageState extends State<AnimationPage>
     super.dispose();
   }
 
-  Future<void> startAnimation() async {
-    await _controller.forward();
-    // AnimationController.forward 는 컨트롤러에 애니메이션을 시작하도록 지시
-  }
+  // Future<void> startAnimation() async {
+  //   await _controller.forward();
+  //   // AnimationController.forward 는 컨트롤러에 애니메이션을 시작하도록 지시
+  // }
 
   @override
   Widget build(BuildContext context) {
