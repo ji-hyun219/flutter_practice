@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/future_builder_test/future_builder2.dart';
+import 'package:my_app/pages/stream_builder_test/stream_builder.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -26,7 +26,7 @@ void main() {
         // home: PurchaseWidget(),
         // home: TodoList(),
         // home: SliderPage()),
-        home: FutureBuilderPage2()),
+        home: StreamBuilderPage()),
   );
   // loadAddress();
   // loadProduct();
