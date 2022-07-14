@@ -872,3 +872,7 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 ??= : 변수가 현재 널인 경우에만 변수에 값 지정
 ?? : 왼쪽 표현식 값이 널이 아니면 왼쪽 표현식을, 널이면 오른쪽 표현식 리턴
 ?. : null 이면 null 값 출력
+
+```dart
+ _homeViewModel.user?.referralCode ?? '',
+```
