@@ -866,3 +866,9 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 2. Todo 리스트를 보여줍니다.
 3. Todo 에 대한 상세 정보를 보여줄 수 있는 화면을 생성합니다.
 4. 상세 화면으로 이동하면서 데이터를 전달합니다.
+
+# ? 관련 연산자
+
+??= : 변수가 현재 널인 경우에만 변수에 값 지정
+?? : 왼쪽 표현식 값이 널이 아니면 왼쪽 표현식을, 널이면 오른쪽 표현식 리턴
+?. : null 이면 null 값 출력
