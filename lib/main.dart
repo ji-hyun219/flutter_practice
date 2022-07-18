@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
 import 'package:my_app/pages/aspect_ratio.dart';
+import 'package:my_app/pages/test.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -32,4 +33,5 @@ void main() {
   // loadAddress();
   // loadProduct();
   // loadPage();
+  makeDummyData();
 }
