@@ -1,27 +1,42 @@
 import 'dart:math';
 
-List<String> resultData = [];
+List<Map<String, String>> resultData = [];
+List<int> cumulative = []; // [1, 3, 6, 10, 70, 165]
 final gift = ['100,000', '49,680', '10,000', '5,555', '2,020', '1,004'];
 final percentage = [1, 2, 3, 4, 60, 95];
 
-List<String> makeDummyData() {
-  int randNum;
+List<Map<String, String>> makeDummyData() {
+  // 1. 포인트 더미 데이터
+  int sum = 0;
+
+  // 누적 확률 구하기
+  for (int i = 0; i < percentage.length; i++) {
+    sum += percentage[i];
+    cumulative.add(sum);
+  }
+
   for (int i = 0; i < gift.length; i++) {
-    randNum = Random().nextInt(99) + 1; // 1 ~ 100
+    int randPointNum = Random().nextInt(164) + 1;
     for (int j = 0; j < gift.length; j++) {
-      if (percentage[j] >= randNum) {
-        print('당첨된 포인트 percentage: ${percentage[j]}');
-        resultData.add((gift[j]));
+      if (randPointNum <= cumulative[j]) {
+        resultData.add({'point': gift[j]});
         break;
       }
     }
-    if (randNum > percentage[5]) {
-      // ex) 99 > 95
-      print('당첨된 포인트 percentage: 95');
-      resultData.add(gift[5]);
-    }
   }
 
-  print('당첨 포인트: $resultData');
+  // 2. 핸드번 번호 뒷자리 더미 데이터
+  for (int i = 0; i < gift.length; i++) {
+    int randPhoneNum = Random().nextInt(8999) + 1000;
+    resultData[i] = {...resultData[i], 'phone': randPhoneNum.toString()};
+  }
+
+  // 3. 당첨 시간 더미 데이터
+  for (int i = 0; i < gift.length; i++) {
+    int randDateNum = Random().nextInt(4) + 2; // 0 - 4 >> 2 - 6
+    resultData[i] = {...resultData[i], 'date': randDateNum.toString()};
+  }
+
+  print('당첨 결과 확인: $resultData');
   return resultData;
 }
