@@ -876,3 +876,18 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 ```dart
  _homeViewModel.user?.referralCode ?? '',
 ```
+
+# FutureBuilder 가 여러 번 호출되는 것을 방지
+
+```dart
+ class Pagina3State extends State<Pagina3> {
+   late final Future myFuture = getDataArray();
+
+   @override
+   Widget build(BuildContext context) {
+       child: FutureBuilder(
+              future: myFuture,
+      )
+   }
+}
+```
