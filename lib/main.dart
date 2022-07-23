@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/aspect_ratio.dart';
-import 'package:my_app/pages/make_dummy_data.dart';
+import 'package:my_app/pages/register_page.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -28,10 +27,11 @@ void main() {
         // home: TodoList(),
         // home: SliderPage()),
         // home: StreamBuilderPage()),
-        home: AspectRatioPage()),
+        // home: AspectRatioPage()),
+        home: RegisterPage()),
   );
   // loadAddress();
   // loadProduct();
   // loadPage();
-  makeDummyData();
+  // makeDummyData();
 }
