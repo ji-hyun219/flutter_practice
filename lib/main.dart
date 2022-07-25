@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
+import 'package:my_app/pages/drop_down.dart';
 import 'package:my_app/pages/list_generate.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
@@ -19,7 +20,7 @@ import 'package:my_app/pages/list_generate.dart';
 void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
-    GetMaterialApp(
+    const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
       // home: DynamicLink(),
@@ -29,14 +30,15 @@ void main() {
       // home: StreamBuilderPage()),
       // home: AspectRatioPage()),
       // home: RegisterPage()),
-      home: ListGenerate(
-        items: List<ListItem>.generate(
-          1000,
-          (i) => i % 6 == 0
-              ? HeadingItem('Heading $i')
-              : MessageItem('Sender $i', 'Message body $i'),
-        ),
-      ),
+      // home: ListGenerate(
+      //   items: List<ListItem>.generate(
+      //     1000,
+      //     (i) => i % 6 == 0
+      //         ? HeadingItem('Heading $i')
+      //         : MessageItem('Sender $i', 'Message body $i'),
+      //   ),
+      // ),
+      home: DropDownPage(),
     ),
   );
   // loadAddress();
