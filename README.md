@@ -891,3 +891,25 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
    }
 }
 ```
+
+# List Generate
+
+```dart
+List<ListItem> List.generate(
+  int length,
+  ListItem Function(int) generator, {
+  bool growable = true,
+})
+```
+
+```dart
+final growableList =
+    List<int>.generate(3, (int index) => index * index, growable: true);
+print(growableList); // [0, 1, 4]
+
+final fixedLengthList =
+    List<int>.generate(3, (int index) => index * index, growable: false);
+print(fixedLengthList); // [0, 1, 4]
+```
+
+The created list is fixed-length if [growable] is set to false.

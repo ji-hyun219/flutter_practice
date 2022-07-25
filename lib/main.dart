@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/register_page.dart';
+import 'package:my_app/pages/list_generate.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -19,16 +19,25 @@ import 'package:my_app/pages/register_page.dart';
 void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
-    const GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        // home: SrtStaking(),
-        // home: DynamicLink(),
-        // home: PurchaseWidget(),
-        // home: TodoList(),
-        // home: SliderPage()),
-        // home: StreamBuilderPage()),
-        // home: AspectRatioPage()),
-        home: RegisterPage()),
+    GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      // home: SrtStaking(),
+      // home: DynamicLink(),
+      // home: PurchaseWidget(),
+      // home: TodoList(),
+      // home: SliderPage()),
+      // home: StreamBuilderPage()),
+      // home: AspectRatioPage()),
+      // home: RegisterPage()),
+      home: ListGenerate(
+        items: List<ListItem>.generate(
+          1000,
+          (i) => i % 6 == 0
+              ? HeadingItem('Heading $i')
+              : MessageItem('Sender $i', 'Message body $i'),
+        ),
+      ),
+    ),
   );
   // loadAddress();
   // loadProduct();
