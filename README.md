@@ -2,66 +2,6 @@
 
 flutter 연습 공간
 
-# Stack 위젯
-
-위젯 리스트를 가지고 밑에서부터 형성
-
-```dart
-Stack(
-  children: <Widget>[
-    myGrayBox,
-    myRedBox,
-    Positioned(
-      bottom: 0,
-      right: 0,
-      child: myGreenBox,
-    ),
-    myBlueBox,
-    myYellowBox,
-  ]
-)
-```
-
-- Positioned 속성을 사용하면 Stack 내에서 특정 하위 요소에 특정 위치를 지정할 수 있습니다.
-
-```dart
-Stack(
-  children: <Widget>[
-    myGrayBox,
-    Positioned(
-      bottom: -50,
-      right: -50,
-      child: myBlueBox,,
-    ),
-  ],
-  overflow: Overflow.visible,
-)
-```
-
-- 가끔은 Stack 의 경계선 밖으로 하위 위젯을 밀어내기도 합니다.
-- Overflow 속성을 이용해서 경계선을 벗어날지 말지를 설정해줄 수도 있습니다.
-
-# ListView 위젯
-
-```dart
-ListView(
-  children: [item1, item2, item3],
-  scrollDirection: Axis.vertical,
-  <!-- physics: NeverScrollableScrollPhysics(), -->
-  <!-- addAutomaticKeepAlives: false, -->
-  <!-- casheExtent: 100.0, -->
-);
-```
-
-```dart
-ListView.builder(
-  itemBuilder: (_, index) =>
-    Text('Item $index'),
-);
-```
-
-- ListView.builder: 쉽게 만들어지는 긴 항목 리스트나 동적으로 제작되는 항목 리스트 만들기
-
 # Stateful Widget
 
 종종 상위 위젯이 상태를 관리하고 하위 위젯에 업데이트 시기를 알리는 것이 가장 합리적이다.
@@ -892,24 +832,39 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 }
 ```
 
-# List Generate
+# 플러터의 빌드 모드
 
-```dart
-List<ListItem> List.generate(
-  int length,
-  ListItem Function(int) generator, {
-  bool growable = true,
-})
-```
+언제 어떤 모드를 사용해야 하는지 간략하게 요약
 
-```dart
-final growableList =
-    List<int>.generate(3, (int index) => index * index, growable: true);
-print(growableList); // [0, 1, 4]
+- 개발하면서 hot reload 를 사용하고 싶다면, 디버그 모드를 사용하세요.
+- 성능을 분석하고 싶다면, 프로파일 모드를 사용하세요.
+- 앱을 출시할 준비가 됐다면, 릴리즈 모드를 사용하세요.
 
-final fixedLengthList =
-    List<int>.generate(3, (int index) => index * index, growable: false);
-print(fixedLengthList); // [0, 1, 4]
-```
+### 디버그 모드
 
-The created list is fixed-length if [growable] is set to false.
+디버그 모드에서는 물리적 기기 혹은 애뮬레이터, 시뮬레이터에서 앱이 디버깅할 수 있는 상태로 준비됩니다.
+기본적으로 flutter run 은 디버그 모드로 컴파일합니다.
+
+### 릴리즈 모드
+
+최대한 최적화하고 앱의 사이즈를 가장 작게 하기를 원한다면, 앱을 배포할 때 릴리즈 모드를 사용하세요.
+모바일의 경우 릴리즈 모드는 (시뮬레이터와 애뮬레이터에서 지원되지 않습니다) 아래와 같은 의미가 있습니다.
+
+- Assertions이 불가능합니다.
+- 디버깅 정보는 제거됩니다.
+- 디버깅이 불가능합니다.
+- 빠른 시작, 빠른 실행, 작은 앱 사이즈에 최적화하여 컴파일 합니다.
+- 서비스 익스텐션을 사용할 수 없습니다.
+
+`flutter run --release` 명령은 릴리즈 모드로 컴파일합니다.
+`flutter build <target>` 명령어를 사용하여 특정 모드로 컴파일할 수 있습니다.
+`flutter help build` 로 지원되는 target 목록을 확인하실 수 있습니다.
+
+### 프로파일 모드
+
+프로파일 모드 에서는 앱의 성능을 측정할만한 일부 디버깅 기능이 유지됩니다.
+에뮬레이터나 시뮬레이터는 실제 성능을 표현할 수 없기 때문에 프로파일 모드를 사용할 수 없습니다.
+모바일에서 프로파일 모드는 아래 차이를 제외하면 릴리즈 모드와 유사합니다:
+
+1. 일부 서비스 익스텐션(performance overlay 지원 등)이 활성화됩니다.
+2. 추적이 활성화되고, (DevTools 같은) 소스 레벨의 디버깅을 지원하는 툴을 연결하여 작업할 수 있습니다
