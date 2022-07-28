@@ -50,8 +50,30 @@ class ShoppingScreen extends StatelessWidget {
                 hasScrollBody: true,
                 child: TabBarView(
                   children: [
-                    Container(
-                      color: Colors.amber,
+                    CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Container(
+                            height: 400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SliverPersistentHeader(
+                            pinned: true, delegate: CategoryBreadcrumbs()),
+                        SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                (context, index) => Container(
+                                      height: 40,
+                                      // 보는 재미를 위해 인덱스에 아무 숫자나 곱한 뒤 255로
+                                      // 나눠 다른 색이 보이도록 함.
+                                      color: Color.fromRGBO(
+                                          (index * 45) % 255,
+                                          (index * 70) % 255,
+                                          (index * 25),
+                                          1.0),
+                                    ),
+                                childCount: 40))
+                      ],
                     ),
                     Container(
                       color: Colors.redAccent,
@@ -114,6 +136,45 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
         labelColor: Colors.black,
         indicatorColor: Colors.black,
         indicatorSize: TabBarIndicatorSize.label,
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 48;
+
+  @override
+  double get minExtent => 48;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
+class CategoryBreadcrumbs extends SliverPersistentHeaderDelegate {
+  const CategoryBreadcrumbs();
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          const Text("의류", style: TextStyle(color: Colors.black)),
+          const SizedBox(width: 4),
+          const Text(">", style: TextStyle(color: Colors.black)),
+          const SizedBox(width: 4),
+          const Text("전체", style: TextStyle(color: Colors.black)),
+          const Spacer(),
+          TextButton(
+            onPressed: () {},
+            child: const Center(child: Text("전체보기")),
+          )
+        ],
       ),
     );
   }
