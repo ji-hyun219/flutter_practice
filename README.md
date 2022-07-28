@@ -1072,3 +1072,29 @@ pubspec.lock 파일을 보니 get 이라는 package 가 명시되어 있었고, 
 
 `cd fvm` >> `ll` >> `default, versions`
 `cd default` >> `ll` >> `bin 확인`
+
+# 스크롤 관련
+
+```dart
+class MyShoppingPage extends StatelessWidget {
+  const MyShoppingPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: /*탭바의 수 만큼 */,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(),
+          SliverPersistentHeader(delegate: /*탭바*/ ),
+          SliverFillRemaining(
+            // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
+            hasScrollBody: true,
+            child: TabBarView(),
+          )
+        ],
+      ),
+    );
+  }
+}
+```
