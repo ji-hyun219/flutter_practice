@@ -844,6 +844,7 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 
 디버그 모드에서는 물리적 기기 혹은 애뮬레이터, 시뮬레이터에서 앱이 디버깅할 수 있는 상태로 준비됩니다.
 기본적으로 flutter run 은 디버그 모드로 컴파일합니다.
+`flutter run`: VSCode 가 아닌 터미널을 사용해서 실행하는 명령. `flutter run`을 사용하면 Flutter 의 Hot Reloading 기능이 정상적으로 동작하지 않아 VSCode 의 Debugging 기능을 사용하여 프로젝트를 실행
 
 ### 릴리즈 모드
 
@@ -868,3 +869,206 @@ A [State] object's configuration is the corresponding [StatefulWidget] instance.
 
 1. 일부 서비스 익스텐션(performance overlay 지원 등)이 활성화됩니다.
 2. 추적이 활성화되고, (DevTools 같은) 소스 레벨의 디버깅을 지원하는 툴을 연결하여 작업할 수 있습니다
+
+# 안드로이드 앱 출시 준비하기
+
+Flutter 앱 개발하는 동안, 커맨드 라인에서의 flutter run 을 실행하거나 IDE 의 툴바 Run 과 Debug 를 선택하여 앱을 테스트할 수 있습니다.
+Flutter 는 기본적으로 `앱의 debug 버전을 빌드`합니다.
+
+앱의 release 버전을 출시 전, `마지막 작업들`에 대해서 알아보자.
+
+### 앱 서명하기
+
+Google Play 스토어에 출시하기 위해서는 반드시 앱에 `디지털 서명`을 해야 합니다.
+
+1. keystore 만들기
+   아래 명령어를 사용
+   `keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key`
+
+- 이 파일은 항상 개인적으로 보관하세요.
+- 절대 공개된 저장소에 올리지 마세요.
+
+참고:
+
+- keytool 은 프로젝트 경로에 존재하지 않을 수 있습니다.
+- 해당 파일은 Android 스튜디오와 함께 설치되는 Java JDK 에 포함되는 파일입니다.
+- 해당 파일에 대한 구체적인 경로는 명령줄에 flutter doctor -v 을 입력한 후, 표시되는 `java binary at:` 다음에 나타나는 경로에서 Java 를 포함하고 있는 디렉토리의 keytool 파일을 통해 확인할 수 있습니다.
+
+2. 앱으로부터 keystore 참조하기
+   keystore 참조에 관한 구성을 담을 `<app dir>/android/key.properties` 파일을 생성합니다.
+
+```
+storePassword=<password from previous step>
+keyPassword=<password from previous step>
+keyAlias=key
+storeFile=<key store 파일 위치, 예) /Users/<user name>/key.jks>
+```
+
+3. Gradle 에서 서명 구성하기
+   앱의 서명을 구성하기 위하여 `<app dir>/android/app/build.gradle` 파일을 수정합니다.
+
+- 이 외에는 공식 문서 참고하기
+
+# 앱 번들(AAB - Android App Bundle) 과 APK(Android Package) 차이
+
+APK 는 이미 완성된 안드로이드 앱 파일이고, AAB 는 APK 를 완성해주는 요소를 담은 패키지이다.
+예를 들어, 어떤 앱을 설치할 때, 한국어 기반의 갤럭시 S21 과 독일어 기반의 갤럭시 S10 두 경우 모두 똑같은 APK 파일이 설치되는 것이 지금까지의 방법이었다.
+하지만 AAB 형식으로 배포될 경우 사용자 기기에 필요한 파일만으로 구성된, 군더더기가 제거된 APK 파일을 설치할 수 있는 것이다.
+
+### AAB 를 쓰면 좋은 점
+
+1.  앱의 크기가 줄어든다.
+
+### 단점
+
+보안에 대한 우려가 있다.
+모든 안드로이드 앱에는 개발자의 서명 파일이 들어간다.
+서명을 하여 '이 앱을 만든 사람은 나'라는 증거를 남기는 것이다.
+서명 파일은 개발자가 APK 파일에 직접 첨부한다.
+따라서 누군가가 앱을 멋대로 변형해 배포하려 해도, 원래 개발자의 서명이 없기 때문에 공식 앱이 아님을 확인할 수 있다.
+
+하지만 AAB 파일은 위에서 짚었듯이 완성된 앱이 아니라 완성품으로 태어날 수 있는 레고 블록의 모음이다.
+그리고 사용자를 위해 레고 블록을 끼워 맞추는 것은 개발자가 아니라 구글 플레이다.
+따라서 서명은 개발자가 아닌 구글 플레이가 대신하게 된다.
+마치 부동산 계약할 때 대리인이 서명할 수 있는 것처럼, AAB로 배포되면 필연적으로 구글 플레이가 대리 서명을 하게 되는 것이다.
+
+다른 이가 나 대신 서명하는 것은 (아무리 철저하게 진행된다고 해도) 찝찝함이 있을 수밖에 없다.
+구글은 대리 서명에 있어 최고의 보안을 약속했지만, 만에 하나 구글이 레고 블록을 엉성하게 조립하거나, 없던 코드를 집어넣는 일이 생기면 그에 대한 사용자들의 불만은 개발자가 고스란히 떠안아야 한다.
+사용자 입장에서는 APK건 AAB건 알 바 아니기 때문이다.
+개발자 자신의 컨트롤 범위를 벗어난다는 점에서 우려하는 이가 많다.
+
+# 플러터에서 핫 리로드란
+
+일반적으로 Native iOS 혹은 Android 개발을 하다 보면 굉장히 스트레스 받는 요소는 개발적인 부분들뿐만 아니라 코드 변경 이후 빌드 시간이죠.
+
+변경한 내용에 대해 빠르게 확인해보고 싶지만 그럴 수가 없는 게 현실이며 프로젝트가 커지면 커질수록 이 대기시간은 기하급수적으로 증가하게 됩니다.
+
+따라서, 이런 부분을 정확히 알고 있는 Flutter에서 굉장히 장점으로 내세우는 기능이 바로 Hot Reload입니다. Hot Reload를 활용하면 변경 사항을 즉각적으로 확인할 수 있으며 코드의 변경 및 확인 사이클이 매우 짧아지게 되어 빠른 시도, 빠른 피드백이 가능하게 됩니다.
+
+### 핫 리로드
+
+기본적으로 업데이트된 소스 파일들이 Dart Virtual Machine 에 주입되면 Flutter 는 변경된 사항들을 기반으로 widget tree 를 재구성함으로써 변경 사항들이 빠르게 결과물에 적용되는 것을 볼 수 있습니다.
+
+### Hot Restart, Full Restart 와의 차이점
+
+- `Hot reload`: 앱의 State 는 유지하되 Widget Tree 만 재구성하고 `main() 및 initState() 는 다시 호출되지 않습니다.`
+- `Hot Restart`: 앱을 새로 시작하며 기존의 State 를 잃게 됩니다.
+- `Full Restart`: 기존 iOS, Android 빌드와 같이 전체 Swift, Kotlin 등을 모두 다시 컴파일 및 다시 실행합니다.
+
+### Hot Reload 가 동작하지 않는 경우
+
+기본적으로 많은 상황에서 Hot Reload 를 통해 즉각적으로 결과를 확인할 수 있지만 특정 케이스에서는 Hot Restart 혹은 Full Restart 를 활용해야 할 수 있습니다.
+
+- 앱이 종료된 경우
+  앱이 특수한 상황에서 종료된 경우에는 Hot Reload가 동작하지 않습니다.
+- 변경된 부분에서 에러가 발생한 경우
+  변경 지점에서 Compilation Error가 발생한 경우 Hot Reload가 동작하지 않지만 해당 Error를 수정한다면 바로 결과를 확인할 수 있습니다.
+- Enumerated types
+  Enumerated Type을 Class로 변경하거나 Class를 Enumerated Type으로 변경한 경우에는 Hot Reload 사용이 불가능합니다.
+- 폰트 변경
+  대부분의 assets에 대해 Hot Reload를 지원하지만 Font 변경의 경우 Hot Restart를 통해 변경해야 합니다.
+- Generic types
+  Generic type의 정의가 변경된 경우에도 Hot Reload는 동작하지 않습니다.
+- Native Code
+  Swift, Kotlin, Java 등의 Native Code를 수정한 경우에는 Full Restart를 진행해야 합니다.
+
+https://yojkim.medium.com/flutter%EC%97%90%EC%84%9C%EC%9D%98-hot-reload%EB%9E%80-8fb2ecdc757f
+
+# Flutter 빌드 에러 대응
+
+Flutter 에서 `버전 업그레이드나 다운 그레이드를 하다보면 아래와 같이 빌드 에러가 발생`하는 경우를 볼 수 있습니다.
+보통 이런 경우 `cache 되어 있는 파일들을 모두 삭제 후 다시 설치`하여 해결할 수 있습니다,
+이런 방법으로 해결이 안된다면 단순 빌드가 꼬였다기보다는 flutter, Dart SDK, Android SDK, NDK, IOS, library 버전 등이 안 맞는 경우일 수 있기 떄문에 로그를 꼼꼼하게 확인해보아야 합니다.
+
+### flutter clean
+
+`flutter clean` 은 `/build 폴더에 있는 build-cache 를 삭제`합니다.
+사용 시기의 예는 /ios 및 /android 폴더에 있는 플랫폼별 파일을 크게 변경할 때입니다.
+
+```
+Cleaning Xcode workspace... 3.1s
+Deleting build... 1,021ms
+Deleting .dart_tool... 2ms
+Deleting .packages... 0ms
+Deleting Generated.xcconfig... 0ms
+Deleting flutter_export_environment.sh... 0ms
+Deleting Flutter.podspec... 0ms
+Deleting .flutter-plugins-dependencies... 0ms
+Deleting .flutter-plugins... 0ms
+```
+
+### pubsec.yaml 내부의 종속성을 업데이트 하는 명령
+
+How to delete the flutter packages in .pub-cache folder?
+When we give `flutter clean`, it will delete the build folder in the current directory.
+We can delete it manually, but my requirement is `to delete the packages in .pub-cache folder` using the command.
+
+해결방법: `flutter pub cache clean` 명령을 치면 아래와 같이 뜬다.
+
+```
+This will remove everything inside /Users/jihyun/.pub-cache.
+You will have to run `flutter pub get` again in each project.
+Are you sure? (y/N)? y
+Removing pub cache directory /Users/jihyun/.pub-cache.
+```
+
+참고로 `flutter pub cache` 명령만 치면 아래와 같이 뜬다.
+
+```
+Missing subcommand for "pub cache".
+
+Usage: pub cache [arguments...]
+-h, --help Print this usage information.
+
+Available subcommands:
+add Install a package.
+clean Clears the global PUB_CACHE.
+repair Reinstall cached packages.
+```
+
+혹은 이렇게 일반 명령줄 명령을 사용할 수 있습니다. `rm -r ~/.pub-cache`
+
+Next time you run
+`flutter pub get`
+
+-> 그러면 프로젝트의 `pubspec.lock 파일에 지정된 패키지가 다시 다운로드`됩니다.
+
+참고로 `pubspec.lock 삭제하고 flutter pub get` 을 하면 `pubspec.yaml 파일을 기반으로 하는 최신 비중단 버전을 가져옵니다`.
+
+NOTE:
+
+- 모든 글로벌 Pub 패키지도 .pub-cache 폴더에 저장되므로 다음에 필요할 때마다 다시 설치해야 합니다.
+- 수행하려는 작업에 따라 삭제할 필요가 없습니다. 내가 생각할 수 있는 유일한 이유는 더 이상 사용하지 않는 이전 버전의 패키지를 삭제하여 공간을 절약하려는 경우입니다.
+
+### Flutter 버전 업데이트 시 pub-cache 에러 발생 시 예제 해결 방법을 어떤 블로그에서 참고
+
+확인해보니 .pub-cache 내에 있는 package 에서 Theme 사용 시 파라미터가 없다는 에러였다.
+pubspec.yaml 파일에서는 get-3.8.0 을 사용하지 않았지만, 사용하고 잇는 package 에서 dependency 로 사용하고 있는 듯 하다.
+pubspec.lock 파일을 보니 get 이라는 package 가 명시되어 있었고, 버전은 3.8.0 이었다.
+
+사용하고 있는 package 에 대응하여 최신 버전으로 반영이 되어 있지 않을 수 있다고 생각되어 pubspec.lock 파일을 삭제 후 flutter pub get 명령어를 이용하여 pubspec.lock 을 갱신해주니 정상적으로 빌드가 되었다.
+
+# 플러터 3.0.5 업데이트하면서 했던 방법
+
+아무튼 위에 장황한 설명을 배제하고 플러터 3.0.5 업데이트하면서 했던 방법
+
+1. flutter clean
+2. flutter pub cache clean
+3. flutter pub get
+
+# 플러터 실제 빌드했던 방법 (apk 와 abb)
+
+`flutter build apk && flutter build appbundle` 명령을 치자.
+✓ Built build/app/outputs/flutter-apk/app-release.apk (42.6MB).
+✓ Built build/app/outputs/bundle/release/app-release.aab (44.1MB).
+
+하나의 폴더 cashfi_app 를 만들어준 뒤 -> cashfi_app 이동
+`cp ~/danbi/cashfi-2.0-flutter/build/app/outputs/flutter-apk/app-release.apk ./app-release-0727.apk`
+`cp ~/danbi/cashfi-2.0-flutter/build/app/outputs/bundle/release/app-release.aab ./app-release-0727.aab`
+
+여기서 주의할 점은 yaml 파일에서 버전을 `version: 1.1.16+32` 이라고 하면 `1.1.17+33` 이렇게 올려야 한다.
+
+# flutter 경로 설정
+
+`cd fvm` >> `ll` >> `default, versions`
+`cd default` >> `ll` >> `bin 확인`
