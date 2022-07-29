@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
+import 'package:my_app/pages/make_dummy_data.dart';
 import 'package:my_app/pages/nested_scroll.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
@@ -43,5 +44,5 @@ void main() {
   // loadAddress();
   // loadProduct();
   // loadPage();
-  // makeDummyData();
+  makeDummyData();
 }
