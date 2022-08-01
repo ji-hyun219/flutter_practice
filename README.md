@@ -1100,3 +1100,47 @@ class MyShoppingPage extends StatelessWidget {
 ```
 
 https://api.flutter.dev/flutter/widgets/CustomScrollView-class.html
+
+# Application Id 설정
+
+모든 Android 앱에는 `com.example.myapp` 과 같이 자바 패키지 이름처럼 보이는 고유한 애플리케이션 ID 가 있습니다. `이 ID 로 기기와 Google Play 스토어에서 앱을 고유하게 식별`할 수 있습니다.
+새 버전의 앱을 업로드하려면 `애플리케이션 ID` 와 `앱 서명에 사용할 인증서`가 원본 아티팩트와 같아야 합니다.
+애플리케이션 ID 를 변경하면 Google Play 스토어는 업로드를 완전히 다른 앱으로 취급합니다.
+따라서, 일단 앱을 게시한 후에는 `애플리케이션 ID 를 변경하면 안됩니다.`
+
+아래에 나오는 것처럼 애플리케이션 ID 는 모듈의 `build.gradle` 파일에 `applicationId` 속성으로 정의됩니다.
+
+```groovy
+android {
+    defaultConfig {
+        applicationId "com.example.myapp"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    ...
+}
+```
+
+Android 스튜디오에서 새 프로젝트를 생성하면 applicationId 는 설치 과정 중에 선택한 자바 스타일 패키지 이름과 정확히 일치합니다.
+하지만 애플리케이션 ID 와 패키지 이름은 이 시점 이후로는 서로 관련이 없습니다.
+코드의 패키지 이름(코드 네임스페이스) 을 변경할 수 있고 이름을 변경하더라도 애플리케이션 ID 에는 영향을 주지 않습니다.
+반대의 경우도 마찬가지입니다.
+단, 이때도 일단 앱을 게시한 후에는 애플리케이션 ID 를 변경하면 안됩니다.
+또한 패키지 이름을 변경하면 다른 결과가 발생한다는 점을 알고 있어야 합니다... (이하 생략)
+
+https://developer.android.com/studio/build/application-id.html
+
+### 패키지 이름 변경
+
+항상 프로젝트의 기본 `AndroidManifest.xml` 파일에 `package` 속성을 지정해야 합니다.
+예를 들어, 제품 버전이나 빌드 유형에 맞는 메니페스트 파일이 추가로 있는 경우 최종적으로 병합된 메니페스트는 항상 우선순위가 가장 높은 메니페스트 파일에서 제공하는 패키지 이름을 사용합니다.
+
+# 각 파일의 역할
+
+- `AndroidManifest.xml`: 매니페스트 파일은 앱의 기본 특성을 설명하고 앱의 각 구성요소를 정의합니다.
+- `build.gradle`: 이 이름을 가진 파일은 두 개입니다. 하나는 프로젝트용으로 'Project: My_First_App' 이고 다른 하나는 앱 모듈용으로 'Module: My_First_App.app'입니다.
+  각 모듈에는 자체 `build.gradle` 파일이 있지만, 현재 이 프로젝트에는 하나의 모듈만 있습니다.
+  각 모듈의 `build.gradle` 파일을 사용하여 Gradle 플러그인에서 앱을 빌드하는 방법을 제어합니다.
+  이 파일에 관한 자세한 구성은 빌드 구성을 참고하세요.
