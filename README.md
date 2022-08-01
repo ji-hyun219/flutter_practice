@@ -1144,3 +1144,126 @@ https://developer.android.com/studio/build/application-id.html
   각 모듈에는 자체 `build.gradle` 파일이 있지만, 현재 이 프로젝트에는 하나의 모듈만 있습니다.
   각 모듈의 `build.gradle` 파일을 사용하여 Gradle 플러그인에서 앱을 빌드하는 방법을 제어합니다.
   이 파일에 관한 자세한 구성은 빌드 구성을 참고하세요.
+
+# Spacer 위젯
+
+https://velog.io/@sharveka_11/Spacer
+
+# ListView
+
+### shrinkWrap
+
+- 일반적으로 `ListView (GridView, PageView, CustomScrollView)` 는 목록 항목이 더 적은 공간을 필요로 하는 경우에도 상위 요소가 제공하는 모든 사용 가능한 공간을 채우려고 시도 합니다.
+
+- `shrinkWrap: true` 을 사용하면 필요한 공간만큼 차지하도록 이 동작을 변경할 수 있습니다.
+
+https://stackoverflow.com/questions/54007073/what-does-the-shrinkwrap-property-do-in-flutter
+
+# http
+
+```dart
+import 'package:http/http.dart' as http;
+```
+
+만약 `as http` 를 안 붙이고 쓰면
+http 패키지의 메소드들 (get, post, put...) 을 아무런 프리픽스 없이
+
+```dart
+response = get(url)
+```
+
+이런 식으로 써야 합니다.
+
+근데 `as http` 하면 이 패키지의 메소드들을 부를 때 http 라는 프리픽스를 붙여줘야 하기 때문에
+(안붙이면 컴파일에러남) 더 명확하게 쓸 수 있기 때문이에요.
+
+```dart
+response = http.get(url)
+```
+
+그 다음에 이렇게 해줍니다.
+
+```dart
+void main() async {
+  String url = "https://eunjin3786.pythonanywhere.com/question/all/";
+  var response = await http.get(url);
+  var statusCode = response.statusCode;
+  var responseHeaders = response.headers;
+  var responseBody = response.body;
+
+  print("statusCode: ${statusCode}");
+  print("responseHeaders: ${responseHeaders}");
+  print("responseBody: ${responseBody}");
+
+  //runApp(MyApp());
+}
+```
+
+http 패키지의 get 함수를 이용해서 특정 url 로의 요청을 정말 쉽게 할 수 있습니다.
+돌려보면 아래와 같이 프린트가 됩니다.
+
+```
+statusCode: 200
+responseHeaders: {connection: keep-alive, date: Thu, content-type: application/json}
+responseBody: 한글이 조금씩 깨짐
+```
+
+한글이 깨질 때
+
+```dart
+import 'dart:convert';
+```
+
+이 패키지를 import 해줍니다.
+이 패키지에 있는 utf8 을 사용할 것입니다.
+
+그리고 responseBody 를 이렇게 바꿔주세요
+
+```dart
+var responseBody = utf8.decode(response.bodyBytes);
+```
+
+```dart
+void main() async {
+  String url = "https://eunjin3786.pythonanywhere.com/question/all/";
+  var response = await http.get(url);
+  var statusCode = response.statusCode;
+  var responseHeaders = response.headers;
+  var responseBody = utf8.decode(response.bodyBytes);
+
+  print("statusCode: ${statusCode}");
+  print("responseHeaders: ${responseHeaders}");
+  print("responseBody: ${responseBody}");
+
+  //runApp(MyApp());
+}
+```
+
+지금 responseBody 는 string 값입니다.
+즉 json 타입입니다.
+
+이 string 을 List 로 바꿔주기 위해서 아래와 같이 jsonDecode 를 해줍니다.
+(jsonDecode 는 dart.convert 패키지에 있는 메소드입니다.)
+
+```dart
+List<dynamic> list = jsonDecode(responseBody);
+```
+
+```dart
+void main() async {
+  String url = "https://eunjin3786.pythonanywhere.com/question/all/";
+  var response = await http.get(url);
+  var statusCode = response.statusCode;
+  var responseHeaders = response.headers;
+  String responseBody = utf8.decode(response.bodyBytes);
+
+  List<dynamic> list = jsonDecode(responseBody);
+  print(list);
+  print(list[0]['id']);
+  print(list[0]['title']);
+
+  //runApp(MyApp());
+}
+```
+
+이제 원하는 값을 잘 가져올 수 있습니다.
