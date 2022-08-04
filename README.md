@@ -1267,3 +1267,32 @@ void main() async {
 ```
 
 이제 원하는 값을 잘 가져올 수 있습니다.
+
+# addPostFrameCallback method
+
+build 메소드가 끝난 후, 한 번 불리는 콜백이다.
+보통 위젯들 setup 이 끝난 후 처음 해줘야 하는 작업에 사용
+
+위젯을 빌드한 직후 트리에서 위젯을 변경하려는 작업을 하거나 setState()를 수행하는 경우 비동기 방식을 사용할 수 없다.
+
+# Flutter packageinfo
+
+이 플러터 플러그인은 애플리케이션 패키지에 대한 정보를 쿼리하기 위한 API 를 제공합니다.
+
+```dart
+import 'package:package_info_plus/package_info_plus.dart';
+
+...
+
+// Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
+WidgetsFlutterBinding.ensureInitialized();
+
+...
+
+PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+String appName = packageInfo.appName;
+String packageName = packageInfo.packageName;
+String version = packageInfo.version;
+String buildNumber = packageInfo.buildNumber;
+```
