@@ -41,6 +41,7 @@ dependencies:
   visibility_detector: ^0.3.3
   carousel_slider: ^4.1.1
   package_info_plus: ^1.4.3
+  device_info_plus: ^4.0.1
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'dart:io' show Platform;
 
 class PacakgeInfoPage extends StatefulWidget {
   const PacakgeInfoPage({Key? key, this.title}) : super(key: key);
@@ -43,6 +44,7 @@ class PacakgeInfoPageState extends State<PacakgeInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('기기의 정보:: ${Platform.isMacOS}');
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title!),

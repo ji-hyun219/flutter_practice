@@ -1296,3 +1296,137 @@ String packageName = packageInfo.packageName;
 String version = packageInfo.version;
 String buildNumber = packageInfo.buildNumber;
 ```
+
+# Flutter device info
+
+package:device_info_plus/device_info_plus.dart 를 import 하고 DeviceInfoPlugin 으로 인스턴스화 하여 가져옵니다. 그리고 Android, iOS, Web 플랫폼별 장치 정보를 가져옵니다.
+
+```dart
+import 'package:device_info_plus/device_info_plus.dart';
+
+DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+print('Running on ${androidInfo.model}');  // e.g. "Moto G (4)"
+
+IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+print('Running on ${iosInfo.utsname.machine}');  // e.g. "iPod7,1"
+
+WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+print('Running on ${webBrowserInfo.userAgent}');  // e.g. "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0"
+```
+
+이 플러그인의 일반적인 사용 사례 중 하나는 원격 측정 또는 충돌 보고 목적으로 장치 정보를 얻는 것입니다. 이 시나리오에서 앱은 특정 속성에 관심이 없고 대신 추가 분석을 위해 기기에 대해 알고 있는 모든 정보를 백엔드 서비스로 보내려고 합니다. deviceInfo일반적인 방식으로 플랫폼별 장치 정보를 반환하는 속성 을 활용할 수 있습니다 . 그런 다음 이 toMap메서드를 사용하여 알려진 모든 속성을 Map. 백엔드 서비스는 향후 이 플러그인에 추가될 수 있는 새 속성을 처리할 준비가 되어 있어야 합니다.
+
+```dart
+import 'package:device_info_plus/device_info_plus.dart';
+
+final deviceInfoPlugin = DeviceInfoPlugin();
+final deviceInfo = await deviceInfoPlugin.deviceInfo;
+final map = deviceInfo.toMap();
+// Push [map] to your service.
+```
+
+# import 문에서 "show" 와 "as" 의 차이점
+
+```dart
+import 'dart:convert' show JSON;
+```
+
+```dart
+import 'package:google_maps/google_maps.dart' as GoogleMap;
+```
+
+show 와 as 는 다른 개념입니다.
+as 는 가져온 라이브러리에 이름을 지정합니다.
+일반적으로 라이브러리에 전역 함수가 많은 경우 `라이브러리가 네임스페이스를 오염시키는 것을 방지`하기 위해 수행됩니다.
+as 를 사용하면 예제 `(GoogleMap.LatLng)` 에서와 같이 액세스하여 해당 라이브러리의 모든 기능과 클래스에 액세스할 수 있습니다.
+
+show 및 hide 를 사용하여 애플리케이션에 표시하려는 `특정 클래스를 선택`할 수 있습니다. 귀하의 예는 다음과 같습니다.
+
+```dart
+import 'package:google_maps/google_maps.dart' show LatLng;
+```
+
+이를 통해 해당 라이브러리 LatLng 에 액세스할 수 있지만 다른 것은 없습니다. 이것의 반대는 다음과 같습니다.
+
+```dart
+import 'package:google_maps/google_maps.dart' hide LatLng;
+```
+
+### 사례들로 알아보기
+
+1. `import 'dart:async' show Stream;`
+
+```dart
+void main() {
+  List data = [1, 2, 3];
+  Stream stream = new Stream.fromIterable(data); // do able
+  StreamController controller = new StreamController(); // not do able
+                                                        // because you only show Stream
+}
+```
+
+2. `import 'dart:async' as async;`
+
+```dart
+void main() {
+  async.StreamController controller = new async.StreamController(); // do able
+  List data = [1, 2, 3];
+  Stream stream = new Stream.fromIterable(data); // not do able
+                                                 // because you namespaced it with 'async'
+}
+```
+
+3. as 예시
+   as 는 일반적으로 가져온 라이브러리에 충돌하는 클래스가 있을 때 사용됩니다.
+   예를 들어 'my_library.dart' 에 named 된 클래스 Stream 을 포함하고 있고 너는 또한 dart:async Stream 클래스를 사용하길 원한다.
+
+```dart
+import 'dart:async';
+import 'my_library.dart';
+
+void main() {
+  Stream stream = new Stream.fromIterable([1, 2]);
+}
+```
+
+위와 같이 하면 우리는 이 Stream 클래스가 비동기 라이브러리에서 왔는지 아니면 자신의 라이브러리에서 왔는지 알 수 없습니다.
+우리는 `as` 를 사용해야 합니다.
+
+```dart
+import 'dart:async';
+import 'my_library.dart' as myLib;
+
+void main() {
+  Stream stream = new Stream.fromIterable([1, 2]); // from async
+  myLib.Stream myCustomStream = new myLib.Stream(); // from your library
+}
+```
+
+4. show 의 경우
+   특정 클래스만 필요하는 것을 알 때 사용하는 것도 있고, 가져온 라이브러리에 충돌하는 클래스가 있는 경우에도 사용할 수 있다.
+
+```dart
+import 'dart:async';
+import 'my_library.dart';
+
+void main() {
+  Stream stream = new Stream.fromIterable([1, 2]); // not do able
+                                                   // we don't know whether Stream
+                                                   // is from async lib ir your own
+  CustomStream customStream = new CustomStream();// do able
+}
+```
+
+위는 아래와 같이 해결할 수 있습니다.
+
+```dart
+import 'dart:async';
+import 'my_library.dart' show CustomStream;
+
+void main() {
+  Stream stream = new Stream.fromIterable([1, 2]); // do able, since we only import Stream
+                                                   // async lib
+  CustomStream customStream = new CustomStream();// do able
+}
+```

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
+import 'package:my_app/pages/info/get_device_info.dart';
 import 'package:my_app/pages/make_dummy_data.dart';
-import 'package:my_app/pages/package.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -40,7 +40,8 @@ void main() {
       // ),
       // home: DropDownPage(),
       // home: TabBarPage()
-      home: PacakgeInfoPage(title: 'PackageInfo example app'),
+      // home: PacakgeInfoPage(title: 'PackageInfo example app'),
+      home: GetMyDeviceInfo(),
     ),
   );
   // loadAddress();
