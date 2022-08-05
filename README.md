@@ -1268,13 +1268,6 @@ void main() async {
 
 이제 원하는 값을 잘 가져올 수 있습니다.
 
-# addPostFrameCallback method
-
-build 메소드가 끝난 후, 한 번 불리는 콜백이다.
-보통 위젯들 setup 이 끝난 후 처음 해줘야 하는 작업에 사용
-
-위젯을 빌드한 직후 트리에서 위젯을 변경하려는 작업을 하거나 setState()를 수행하는 경우 비동기 방식을 사용할 수 없다.
-
 # Flutter packageinfo
 
 이 플러터 플러그인은 애플리케이션 패키지에 대한 정보를 쿼리하기 위한 API 를 제공합니다.
@@ -1430,3 +1423,20 @@ void main() {
   CustomStream customStream = new CustomStream();// do able
 }
 ```
+
+# flutter_secure_storage
+
+안전한 저장소에 데이터를 저장하는 Flutter 플러그인
+Flutter Secure Storage 는 안전한 저장소에 데이터를 저장하는 API 를 제공합니다.
+iOS 에서는 Keychain 을 사용하고 Android 에서는 KeyStore 기반 솔루션을 사용합니다.
+
+# WidgetBinding.instance.addPostFrameCallback() 부분
+
+build 메소드가 끝난 후, 한 번 불리는 콜백이다.
+보통 위젯들 setup 이 끝난 후 처음 해줘야 하는 작업에 사용
+
+위젯을 빌드한 직후 트리에서 위젯을 변경하려는 작업을 하거나 setState()를 수행하는 경우 비동기 방식을 사용할 수 없다.
+위젯 트리의 빌드 프로세스 중에 콜백이 시작되기 때문이다.
+
+initState 에서 데이터를 비동기로 불러오기 위해 사용이 되어지는 부분입니다.
+initState 자체에 async 를 적용할 수 없기 때문에 다음과 같은 방식으로 사용을 합니다.
