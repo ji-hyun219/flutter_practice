@@ -1457,3 +1457,241 @@ https://velog.io/@realryankim/DartFluter-Dart-%EC%96%B8%EC%96%B4-%EB%B0%B0%EC%9A
 
 - streamBuidler
   위치 업데이트, 음악 재생, 스톱워치 일부 데이터를 여러 번 가져올 때 사용
+
+# 플러터에서의 리액티브 프로그래밍
+
+요즘 프로그래밍의 대세는 반응형 프로그래밍입니다.
+반응형 프로그래밍은 비동기 데이터 처리를 효율적으로 하기 위해 만들어졌습니다.
+비동기 처리는 데이터가 언제 도착할지 모르는 http 호출이나, UI 클릭, 데이터 저장, 에러 처리 등을 할 때 쓰입니다.
+플러터에서도 반응형 프로그래밍을 할 수 있습니다.
+보통 Stream 이나 RxDart 를 써서 합니다.
+
+# Stream, StreamController
+
+스트림은 데이터가 들어오고 나오는 통로
+데이터가 변하는걸 보고 있다가 그에 맞춰 적절한 처리를 합니다.
+`필터링(where)`이나 `수정(map)`, `버퍼링(take)` 같은 일을 합니다.
+스트림 컨트롤러는 여러 스트림을 관리하는데 쓰입니다.
+
+데이터가 추가되거나 이벤트가 종료되거나 할 때 스트림 컨트롤러를 써서 처리해줄 수 있습니다.
+
+```dart
+void main() {
+  StreamController ctrl = StreamController();
+​
+  ctrl.stream.listen((data) {
+    print(data);
+  });
+​
+  ctrl.add(10);
+  ctrl.add("Good morning");
+  ctrl.add({"age": 50, "name": "Youngmi"});
+​
+  ctrl.close();
+}
+```
+
+위 예제는 스트림 컨트롤러에 데이터가 추가될 때마다 출력하도록 했습니다.
+
+### 스트림을 관리하는 데 사용되는 Dart 의 비동기 라이브러리에는 네 가지 주요 클래스가 있다
+
+- 스트림: 이 클래스는 데이터의 비동기 스트림을 나타냅니다. 리스너는 새 데이터 이벤트의 도착 알림을 구독할 수 있습니다.
+- EventSink: 싱크는 반대 방향으로 흐르는 스트림과 같습니다. EventSink 에 데이터 이벤트를 추가하면 해당 데이터가 연결된 스트림으로 유입됩니다.
+- StreamController: StreamController 는 스트림 관리를 단순화하고 스트림과 싱크를 자동으로 생성하고 스트림의 동작을 제어하기 위한 메서드를 제공합니다.
+
+대부분의 경우 처음 두 개를 직접 인스턴스화하지 않을 것입니다.
+StreamController 를 만들 때 스트림과 싱크를 무료로 얻을 수 있기 때문입니다.
+
+### 스트림 기본 사항
+
+다음은 문자열 데이터 스트림과 함께 네 가지 클래스를 모두 사용하는 방법을 보여주는 기본 예입니다.
+
+```dart
+final controller = StreamController<String>();
+final subscription = controller.stream.listen((String data) {
+  print(data);
+});
+controller.sink.add("Data!");
+```
+
+StreamController 인스턴스를 사용하면 Stream 인스턴스의 listen 메서드를 사용하여 스트림에 접근하여 데이터 이벤트를 수신하고 이에 반응할 수 있으며, EventSick 의 add()메서드를 사용하여 싱크에 접근하여 새로운 데이터 이벤트를 스트림에 추가할 수 있습니다.
+
+controllers 들은 편리한 add() 메서드를 노출시키는 것을 유의해야 한다.
+그것은 싱크에 다가오는 어떤 데이터를 핸들링하는
+
+```dart
+controller.sink.add("Data!");
+```
+
+스트림에 데이터를 추가하기 위해 싱크 참조를 명시적으로 사용할 필요는 없지만 이것이 바로 뒤에서 일어나는 일입니다.
+
+오류가 발생하고 스트림의 리스너에게 알려야 하는 경우 다음 add() 대신 addError() 를 사용할 수 있습니다.
+
+```dart
+controller.addError("Error!");
+```
+
+add() 와 마찬가지로, error 는 sink 를 통해 stream 에 보내지게 될 것이다.
+
+다음으로 컨트롤러를 구성하고 보다 실제적인 컨텍스트에서 스트림을 노출하는 일반적인 패턴을 살펴보겠다.
+
+#### 스트림 사용
+
+일반적으로 컨트롤러와 해당 싱크는 데이터 생산자에게 비공개로 유지되는 반면 스트림은 한 명 이상의 소비자에게 노출됩니다. 자체 외부의 코드와 통신해야 하는 클래스, 아마도 일종의 데이터 서비스 클래스가 있는 경우 다음과 같은 패턴을 사용할 수 있습니다.
+
+```dart
+import 'dart:async';
+
+class MyDataServices {
+  final _onNewData = StreamController<String>();
+  Stream<String> get onNewData => _onNewData.stream;
+}
+```
+
+StreamController 에 액세스하려면 dart:async 라이브러리를 가져와야 합니다.
+\_onNewData 변수는 서비스의 모든 사용자에게 들어오는 데이터를 제공하기 위한 스트림 컨트롤러를 나타내며 제네릭을 사용하여 모든 데이터가 문자열 형식이어야 함을 지정합니다.
+
+컨트롤러 변수의 이름은 의도적으로 getter 와 일치하므로 어떤 컨트롤러가 어떤 스트림에 속하는지 명확합니다.
+getter 는 리스너가 데이터 업데이트를 수신하기 위한 콜백을 제공할 수 있는 컨트롤러의 Stream 인스턴스를 반환합니다.
+
+- To listen for new data events:
+
+```dart
+final service = MyDataService();
+
+service.onNewData.listen((String data){
+  print(data);
+});
+```
+
+데이터 서비스에 대한 참조를 생성한 후 스트림에 데이터가 추가될 때 데이터를 수신하도록 콜백을 등록할 수 있습니다.
+
+선택적으로 오류에 대한 콜백을 제공하고 컨트롤러가 스트림을 닫을 때 알림을 받을 수 있습니다:
+
+```dart
+service.onNewData.listen((String data) {
+  print(data);
+},
+onError: (error) {
+  print(error);
+},
+onDone: () {
+  print("Stream closed!");
+});
+```
+
+여기까지 단일 수신기만 수용할 스트림을 만들었습니다. 그 이상이 필요하다면??
+
+#### 다중 사용자 스트림
+
+때떄로 스트림의 데이터는 단일 수신자를 위한 것이지만 다른 경우에는 원하는 수의 수신자를 허용할 수 있습니다. 예를 들어 앱의 이질적인 부분이 단일 데이터 소스(사용자 인터페이스 요소 또는 기타 논리 구성 요소 모두)의 업데이트에 의존할 수 있습니다.
+스트림에 여러 리스터를 허용하려면 `브로드캐스트 스트림`을 생성해야 합니다.
+
+```dart
+class MyDataService {
+  final _onNewData = StreamController<String>.broadcast();
+  Stream<String> get onNewData => _onNewData.stream;
+}
+```
+
+StreamController 에 대해 broadcast() 명명된 생성자를 사용하면 다중 사용자 스트림이 제공됩니다.
+이를 통해 여러 리스너가 스트림의 새 요소에 대한 알림을 받기 위해 콜백을 등록할 수 있습니다.
+
+다음으로 스트림이 더 이상 필요하지 않을 때 수행할 작업을 살펴보겠습니다.
+
+#### 스트림 닫기
+
+더 이상 제공할 데이터가 없는 데이터 공급자가 있는 경우 컨트롤러를 사용하여 스트림을 닫을 수 있습니다.
+등록된 모든 onDone 콜백이 호출됩니다.
+
+```dart
+class MyDataService {
+  final _onNewData = StreamController<String>.broadcast();
+  Stream<String> get onNewData => _onNewData.stream;
+
+  void dispose() {
+    _onNewData.close();
+  }
+}
+```
+
+이 버전의 데이터 서비스 클래스에는 dispose() 느슨한 끝을 묶는 데 사용할 수 있는 방법이 포함되어 있습니다. 본문에서 컨트롤러의 close() 메서드는 연결된 스트림을 파괴합니다.
+스트림은 더 이상 필요하지 않을 때 항상 닫아야 합니다.
+데이터 서비스 인스턴스가 삭제되고 스트림을 닫지 않고 가비지 수집이 예약되면 앱에서 메모리 누수가 발생할 수 있습니다.
+스트림의 소비자는 데이터 흐름을 관리해야 할 수도 있으며 이것이 구독의 목적입니다.
+
+#### 스트림 구독 관리
+
+스트림 구독에 대한 참조를 저장한 수신기는 해당 구독을 일시 중지, 재개 또는 영구적으로 취소할 수 있습니다. 일시 중지된 구독은 재개될 때까지 더 이상 스트림 데이터를 생성하지 않지만 데이터 이벤트는 그때까지 버퍼링되고 스트림이 재개되면 모두 전달됩니다.
+
+스트림 구독을 일시 중지했다가 다시 시작하려면
+
+```dart
+final service = MyDataService();
+
+final subscription = service.onNewData.listen((String data) {
+  print(data);
+});
+
+subscription.pause();
+subscription.resume();
+```
+
+분명히 일반적으로 구독을 일시 중지했다가 즉시 다시 시작하지는 않지만 코드 조각은 올바른 메서드 호출을 설명하는 역할을 합니다.
+
+리스너가 스트림 구독의 데이터를 더 이상 필요로 하지 않는 경우 구독을 취소할 수 있습니다.
+
+```dart
+subscription.cancel();
+```
+
+구독을 취소한 후 언제든지 새 리스너 콜백을 등록할 수 있지만 새 구독 인스턴스가 생성됩니다. `구독을 취소한 후에는 다시 사용할 수 없습니다.`
+
+다음으로 `스트림에 데이터를 제공할 수 있는 다른 방법`을 살펴보겠습니다.
+
+#### 비동기식 생성기
+
+우리는 미래를 통해 비동기적으로 단일 값을 반환하도록 Dart 의 async 키워드를 함수에 추가하는 방법을 이미 보았습니다.
+async* 키워드 형식의 스트림에 대한 해당 개념의 버전이 있는 것으로 나타났습니다.
+함수를 async* 로 표시하면 값 시퀀스를 비동기적으로 반환할 수 있는 데이터 생성기 함수로 바뀝니다. 이것은 Flutter 애플리케이션의 상태를 관리하기 위해 Flutter 에서 가장 널리 사용되는 BLoC 구현인 flutter_bloc 에서 잘 사용되는 패턴입니다.
+
+```dart
+Stream<int> count(int counTo) async* {
+  for(int i = 1; i <= countTo; i++){
+    yield i;
+  }
+}
+
+// place this code in a function somewhere
+count(10).listen((int value) {
+  print(value);
+});
+```
+
+이 코드는 1부터 10까지의 값을 출력합니다.
+async\* 키워드는 count() 비동기 생성기 함수를 만듭니다.
+count() 가 호출되면 Stream<int> 즉시 반환되므로 해당 호출에서 직접 listen() 호출할 수 있습니다. 스트림의 listen() 메서드는 콜백 함수를 기대하며, 도착하는 대로 각 값을 인쇄합니다.
+
+제너레이터 함수는 yield 키워드를 사용하여 한 번에 하나씩 스트림에 값을 주입합니다.
+본질적 yield 으로 StreamControlleer 인스턴스의 add() 메서드를 호출하는 것입니다.
+특별한 키워드 없이 이와 같은 생성기 함수를 수동으로 생성할 수 있지만, 훨씬 더 장황하고 모든 것을 더 명시적으로 추적해야 하는 고유한 StreamController 를 만드는 것과 같이 앞에서 설명한 패턴을 사용해야 합니다.
+
+비동기 생성기 함수의 주요 이점은 이전 예제에서 명확하지 않은 비동기 특성이라는 것을 이해하는 것이 중요합니다.
+좀 더 명확하기 위해 약간의 변형을 추가해보겠습니다.
+
+```dart
+Stream<int> count(int countTo) async* {
+  for(int i = 1; i <= countTo; i++) {
+    yield i;
+    await Future.delayed(const Duration(seconds: 1));
+  }
+}
+
+count(10).listen((int value) {
+  print(value);
+});
+```
+
+각 명령문 사이에 1초의 지연을 추가하면 yield 값이 거의 즉시가 아니라 1초마다 스트림에 추가됩니다. 이 코드가 실행되면 1에서 10까지의 값이 한 번에 모두가 아니라 엇갈린 방식으로 디버그 콘솔에 나타납니다. 제너레이터 함수는 값을 생성하는 데 필요한 모든 시간을 자유롭게 사용할 수 있으며 준비가 되었을 때만 각각을 생성합니다.
+
+https://dart.academy/streams-and-sinks-in-dart-and-flutter/
