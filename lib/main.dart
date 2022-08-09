@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/pages/login/login_page.dart';
 import 'package:my_app/pages/make_dummy_data.dart';
+import 'package:my_app/pages/stream_builder_test/todo_list.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -20,7 +20,7 @@ import 'package:my_app/pages/make_dummy_data.dart';
 void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
-    const GetMaterialApp(
+    GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
       // home: DynamicLink(),
@@ -42,7 +42,8 @@ void main() {
       // home: TabBarPage()
       // home: PacakgeInfoPage(title: 'PackageInfo example app'),
       // home: GetMyDeviceInfo(),
-      home: MyLoginPage(title: '로그인'),
+      // home: MyLoginPage(title: '로그인'),
+      home: TodoListPage(),
     ),
   );
   // loadAddress();

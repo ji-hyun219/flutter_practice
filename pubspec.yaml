@@ -43,6 +43,7 @@ dependencies:
   package_info_plus: ^1.4.3
   device_info_plus: ^4.0.1
   flutter_secure_storage: ^5.0.2
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:
