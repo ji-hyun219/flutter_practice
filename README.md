@@ -1695,3 +1695,54 @@ count(10).listen((int value) {
 각 명령문 사이에 1초의 지연을 추가하면 yield 값이 거의 즉시가 아니라 1초마다 스트림에 추가됩니다. 이 코드가 실행되면 1에서 10까지의 값이 한 번에 모두가 아니라 엇갈린 방식으로 디버그 콘솔에 나타납니다. 제너레이터 함수는 값을 생성하는 데 필요한 모든 시간을 자유롭게 사용할 수 있으며 준비가 되었을 때만 각각을 생성합니다.
 
 https://dart.academy/streams-and-sinks-in-dart-and-flutter/
+
+# 디스크에 키-값 데이터 저장하기
+
+상대적으로 적은 양의 키-값 데이터를 저장하려고 한다면, shared_preference 플러그인을 사용하세요.
+일반적으로 iOS 와 android 두 플랫폼 모두에 데이터를 저장하기 위한 네이티브 플랫폼 통합 코드를 작성해야 합니다.
+다행히도 `shared_preference` 플러그인을 사용하면 키-값 데이터를 디스크에 저장할 수 있습니다.
+간단한 데이터 저장 기능을 제공하는 shared_preferences 플러그인은 iOS 의 NSUserDefaults 와 Android 의 sharedPreferences 를 감싸고 있습니다.
+
+아래와 같은 단계로 진행합니다.
+
+1. 의존성 추가하기
+2. 데이터 저장하기
+3. 데이터 읽기
+4. 데이터 삭제하기
+
+## 데이터 저장하기
+
+SharedPreferences 클래스가 제공하는 `setter 메서드`를 사용하여 `데이터를 저장`합니다.
+Setter 메서드는 `setInt, setBool, setString` 와 같이 다양한 원시 타입을 지원합니다.
+Setter 메서드는 두 가지 작업을 수행합니다.
+먼저, 메모리 상에서 키-값 쌍을 동기적으로 업데이트합니다. 다음으로, 데이터를 디스크에 저장합니다.
+
+```dart
+// shared preference 얻기
+final prefs = await SharedPreferences.getInstance();
+
+// 값 저장하기
+prefs.setInt('counter', counter);
+```
+
+## 데이터 읽기
+
+SharedPreferences 클래스가 제공하는 getter 메서드를 사용하여 데이터를 읽을 수 있습니다.
+각 setter 에 상응하는 getter 가 존재합니다. 예를 들어 getInt, getBool, getString 와 같은 메서드를 사용할 수 있습니다.
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+// counter 키에 해당하는 데이터 읽기를 시도합니다. 만약 존재하지 않는다면 0을 반환합니다.
+final counter = prefs.getInt('counter') ?? 0;
+```
+
+## 데이터 삭제하기
+
+`remove()` 메서드를 사용하여 데이터를 삭제하세요
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+prefs.remove('counter');
+```
