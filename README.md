@@ -1746,3 +1746,49 @@ final prefs = await SharedPreferences.getInstance();
 
 prefs.remove('counter');
 ```
+
+# Named Constructor
+
+명명된 생성자를 사용하여 클래스에 대해 여러 생성자를 구현하거나 추가 명확성을 제공합니다.
+
+```dart
+const double xOrigin = 0;
+const double yOrigin = 0;
+
+class Point {
+  final double x;
+  final double y;
+
+  Point(this.x, this.y);
+
+  // Named constructor
+  Point.origin()
+      : x = xOrigin,
+        y = yOrigin;
+}
+```
+
+```dart
+void main() {
+  var person = Person.ko();
+  print(person.name);
+  print(person.age);
+
+}
+
+
+class Person {
+  String name;
+  int? age;
+
+  Person(this.name, this.age);
+
+  Person.old(this.name) {
+    this.age = 100;
+  }
+
+  Person.ko({this.name = 'dj', this.age = 10});
+}
+```
+
+Dart 에서 한 class 는 여려 constructor 를 가질 수 있는데, 특이한 점은 각 constructor 에 이름을 붙인다는 것이다.
