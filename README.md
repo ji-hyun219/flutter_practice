@@ -1792,3 +1792,38 @@ class Person {
 ```
 
 Dart 에서 한 class 는 여려 constructor 를 가질 수 있는데, 특이한 점은 각 constructor 에 이름을 붙인다는 것이다.
+
+# Dio Package
+
+dio 객체를 생성하면서 공통적으로 사용하고 싶은 것들을 BaseOptions 를 통해 지정할 수 있다.
+주로 사용하는 옵션들은 다음과 같다.
+
+- baseUrl: 요청할 기본 주소를 설정할 수 있다.
+- connectTimeout: 서버로부터 응답받는 시간을 설정할 수 있다.
+- receiveTimeout: 파일 다운로드 등과 같이 연결 지속 시간을 설정할 수 있다.
+- headers: 요청의 header 데이터를 설정할 수 있다. ex) 인증 토큰
+
+# Logger
+
+```dart
+var logger = Logger(
+  filter: null, // Use the default LogFilter (-> only log in debug mode)
+  printer: PrettyPrinter(), // Use the PrettyPrinter to format and print log
+  output: null, // Use the default LogOutput (-> send everything to console)
+);
+```
+
+prettyPrinter 를 사용하는 경우 더 많은 옵션이 있습니다.
+
+```dart
+var logger = Logger(
+  printer: PrettyPrinter(
+    methodCount: 2, // number of method calls to be displayed
+    errorMethodCount: 8, // number of method calls if stacktrace is provided
+    lineLength: 120, // width of the output
+    colors: true, // Colorful log messages
+    printEmojis: true, // Print an emoji for each log message
+    printTime: false // Should each log print contain a timestamp
+  ),
+);
+```
