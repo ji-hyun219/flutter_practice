@@ -15,8 +15,8 @@ class DioClient {
     ),
   )..interceptors.add(Logging());
 
-  final _baseUrl =
-      "https://reqres.in/api"; // Define the base URL of the API server:
+  // final _baseUrl =
+  //     "https://reqres.in/api"; // Define the base URL of the API server:
 
   // TODO: Add methods
   // Defining the GET request
@@ -40,7 +40,7 @@ class DioClient {
   Future<User?> getUser({required String id}) async {
     User? user;
     try {
-      Response userData = await _dio.get('$_baseUrl/users/$id');
+      Response userData = await _dio.get('/users/$id');
       print('User Info: ${userData.data}');
       user = User.fromJson(userData.data);
     } on DioError catch (e) {
@@ -65,7 +65,7 @@ class DioClient {
 
     try {
       Response response = await _dio.post(
-        '$_baseUrl/users',
+        '/users',
         data: userInfo.toJson(),
       );
 
@@ -89,7 +89,7 @@ class DioClient {
 
     try {
       Response response = await _dio.put(
-        '$_baseUrl/users/$id',
+        '/users/$id',
         data: userInfo.toJson(),
       );
 
@@ -105,7 +105,7 @@ class DioClient {
 
   Future<void> deleteUser({required String id}) async {
     try {
-      await _dio.delete('$_baseUrl/users/$id');
+      await _dio.delete('/users/$id');
       print('User deleted!');
     } catch (e) {
       print('Error deleting user: $e');

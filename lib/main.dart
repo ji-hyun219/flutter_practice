@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // // import 'package:my_app/pages/tapboxB.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
-import 'package:my_app/api/dio_get_page.dart';
+import 'package:my_app/pages/dio_test/dio_all_method.dart';
 import 'package:my_app/pages/make_dummy_data.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
@@ -45,7 +45,7 @@ void main() {
       // home: MyLoginPage(title: '로그인'),
       // home: TodoListPage(),
       // home: Test(),
-      home: DioPage(),
+      home: DioAllPage(),
     ),
   );
   // loadAddress();
