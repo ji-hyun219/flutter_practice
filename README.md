@@ -1872,3 +1872,13 @@ Response response = await _dio.post(
   },
 );
 ```
+
+### 인터셉터
+
+then 또는 catchError 를 사용하여 처리하기 전에 Dio 요청, 응답 및 오류를
+가로챌 수 있습니다.
+실제 시나리오에서 인터셉터는 JSON WEB TOKEN(JWT) 을 사용한 권한 부여, JSON 구문 분석, 오류 처리 및 Dio 네트워크 요청을 쉽게 디버깅하는데 유용합니다.
+
+- onRequest, onResponse, onError 의 세 위치에서 콜백을 재정의하여 인터셉터를 실행할 수 있습니다.
+
+https://blog.logrocket.com/networking-flutter-using-dio/

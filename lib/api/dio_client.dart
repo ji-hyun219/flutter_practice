@@ -1,10 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:my_app/api/interceptors/interceptor.dart';
 import 'package:my_app/models/user.dart';
+import 'package:my_app/models/user_info_model.dart';
 
 class DioClient {
   // TODO: Set up and define the methods for network operations
 
-  final Dio _dio = Dio(); // You can initialize Dio using the following:
+  // You can initialize Dio using the following:
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://reqres.in/api',
+      connectTimeout: 5000,
+      receiveTimeout: 3000,
+    ),
+  )..interceptors.add(Logging());
 
   final _baseUrl =
       "https://reqres.in/api"; // Define the base URL of the API server:
@@ -49,5 +58,57 @@ class DioClient {
       }
     }
     return user;
+  }
+
+  Future<UserInfo?> createUser({required UserInfo userInfo}) async {
+    UserInfo? retrievedUser;
+
+    try {
+      Response response = await _dio.post(
+        '$_baseUrl/users',
+        data: userInfo.toJson(),
+      );
+
+      print('User created: ${response.data}');
+
+      retrievedUser = UserInfo.fromJson(response.data);
+    } catch (e) {
+      print('Error creating user: $e');
+    }
+
+    return retrievedUser;
+  }
+  // 이것은 UserInfo 객체를 매개변수로 사용하여 API 의 끝점으로 보냅니다.
+  // 새로 생성된 사용자 정보와 생성 날짜 및 시간이 포함된 응답을 반환합니다.
+
+  Future<UserInfo?> updateUser({
+    required UserInfo userInfo,
+    required String id,
+  }) async {
+    UserInfo? updatedUser;
+
+    try {
+      Response response = await _dio.put(
+        '$_baseUrl/users/$id',
+        data: userInfo.toJson(),
+      );
+
+      print('User updated: ${response.data}');
+
+      updatedUser = UserInfo.fromJson(response.data);
+    } catch (e) {
+      print('Error updating user: $e');
+    }
+
+    return updatedUser;
+  }
+
+  Future<void> deleteUser({required String id}) async {
+    try {
+      await _dio.delete('$_baseUrl/users/$id');
+      print('User deleted!');
+    } catch (e) {
+      print('Error deleting user: $e');
+    }
   }
 }

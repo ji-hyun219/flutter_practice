@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/api/interceptors/dio_get_client.dart';
+import 'package:my_app/api/dio_client.dart';
 import 'package:my_app/models/user.dart';
 
 class DioPage extends StatefulWidget {
