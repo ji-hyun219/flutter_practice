@@ -1827,3 +1827,48 @@ var logger = Logger(
   ),
 );
 ```
+
+# Dio
+
+매번 baseUrl 과 함께 끝점을 전달하는 대신, 내부에서 baseOption 을 정의하고 Dio 인스턴스화하는 동안 한 번만 전달할 수 있습니다.
+
+Dio 를 초기화하는 동안 다음을 해보기
+
+```dart
+final Dio _dio = Dio(
+  BaseOptions(
+    baseUrl: 'https://reqres.in/api',
+    connectTimeout: 5000,
+    receiveTimeout: 3000,
+  ),
+);
+```
+
+이 방법은 다양한 다른 사용자 정의도 제공합니다.
+
+### 파일 업로드
+
+Dio 는 파일을 서버에 업로드하는 프로세스를 훨씬 간단하게 만듭니다.
+여러 개의 동시 파일 업로드를 처리할 수 있으며 진행 상황을 추적하기 위한 간단한 콜백이 있어 http 패키지보다 훨씬 사용하기 쉽습니다.
+
+formData 및 Dio 를 사용하여 서버에 파일을 쉽게 업로드할 수 있습니다.
+다음은 api 에 이미지 파일을 보내는 방법의 예입니다.
+
+```dart
+String imagePath;
+
+FormData formData = FormData.fromMap({
+  "image": await MultipartFile.fromFile(
+    imagePath,
+    filename: "upload.jpeg",
+  ),
+});
+
+Response response = await _dio.post(
+  '/search',
+  data: formData,
+  onSendProgress: (int sent, int total) {
+    print('$sent $total');
+  },
+);
+```
