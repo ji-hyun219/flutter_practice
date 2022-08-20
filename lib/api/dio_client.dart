@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:my_app/api/interceptors/authorization_interceptor.dart';
 import 'package:my_app/api/interceptors/interceptor.dart';
 import 'package:my_app/models/user.dart';
 import 'package:my_app/models/user_info_model.dart';
@@ -13,7 +14,7 @@ class DioClient {
       connectTimeout: 5000,
       receiveTimeout: 3000,
     ),
-  )..interceptors.add(Logging());
+  )..interceptors.addAll([AuthorizationInterceptor(), Logging()]);
 
   // final _baseUrl =
   //     "https://reqres.in/api"; // Define the base URL of the API server:
