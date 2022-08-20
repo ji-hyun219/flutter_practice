@@ -1,9 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 
 class Logging extends Interceptor {
+  Logger logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      lineLength: 75,
+      colors: true,
+      printEmojis: true,
+      printTime: true,
+    ),
+  );
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     print('REQUEST[${options.method}] => PATH: ${options.path}');
+    logger.i('REQUEST[${options.method}] => PATH: ${options.path}');
+
     return super.onRequest(options, handler);
   }
 
@@ -12,7 +26,15 @@ class Logging extends Interceptor {
     print(
       'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
     );
+    logger.d(
+      'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
+    );
     return super.onResponse(response, handler);
+  }
+
+  @override
+  void onError(DioError err, ErrorInterceptorHandler handler) {
+    logger.e('ERROR: ${err.message}');
   }
 }
 
