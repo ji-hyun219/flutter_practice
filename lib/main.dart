@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 // import 'package:my_app/pages/tapboxC.dart';
 import 'package:get/get.dart';
 import 'package:my_app/pages/make_dummy_data.dart';
-import 'package:my_app/pages/verification_page.dart';
+import 'package:my_app/pages/value_listener.dart';
 // import 'package:my_app/pages/slider.dart';
 // import 'package:my_app/pages/todo_list.dart';
 // import 'package:my_app/pages/get_to_result2.dart';
@@ -20,7 +20,7 @@ import 'package:my_app/pages/verification_page.dart';
 void main() {
   runApp(
     // runApp 다음에는 항상 MaterialApp 이 들어가야 한다.
-    GetMaterialApp(
+    const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // home: SrtStaking(),
       // home: DynamicLink(),
@@ -46,7 +46,7 @@ void main() {
       // home: TodoListPage(),
       // home: Test(),
       // home: DioAllPage(),
-      home: ExamplePinEntry(),
+      home: ValueListenrTest(title: 'valueListenableBuilder 연습'),
     ),
   );
   // loadAddress();
