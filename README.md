@@ -1886,3 +1886,18 @@ https://blog.logrocket.com/networking-flutter-using-dio/
 # throw vs rethrow
 
 예외를 rethrow 하기로 결정한 경우, throw 를 사용하여 동일한 예외 객체를 throw 하는 대신 명령문을 rethrow 사용하는 것을 선호합니다. rethrow 는 예외의 원래 스택 추적을 유지합니다. 반면에 throw 는 스택 추적을 마지막으로 던져진 위치로 재설정합니다.
+
+# image upload (aos, ios)
+
+### ios
+
+- NSCameraUsageDescription
+  https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/NaN
+
+Important: To protect user privacy, an iOS app linked on or after iOS 10.0, and that accesses the device’s camera, must statically declare the intent to do so. Include the NSCameraUsageDescription key in your app’s Info.plist file and provide a purpose string for this key. If your app attempts to access the device’s camera without a corresponding purpose string, your app exits.
+
+This key is supported in iOS 7.0 and later.
+
+중요: 사용자 개인 정보를 보호하기 위해 iOS 10.0 이후에 연결되고 기기의 카메라에 액세스하는 iOS 앱은 그렇게 하려는 의도를 정적으로 선언해야 합니다. 앱 파일에 NSCameraUsageDescription 키를 포함하고 Info.plist이 키의 목적 문자열을 제공합니다. 앱이 해당 목적 문자열 없이 기기의 카메라에 액세스하려고 하면 앱이 종료됩니다.
+
+이 키는 iOS 7.0 이상에서 지원됩니다.
