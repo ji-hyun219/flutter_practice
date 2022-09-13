@@ -1901,3 +1901,74 @@ This key is supported in iOS 7.0 and later.
 중요: 사용자 개인 정보를 보호하기 위해 iOS 10.0 이후에 연결되고 기기의 카메라에 액세스하는 iOS 앱은 그렇게 하려는 의도를 정적으로 선언해야 합니다. 앱 파일에 NSCameraUsageDescription 키를 포함하고 Info.plist이 키의 목적 문자열을 제공합니다. 앱이 해당 목적 문자열 없이 기기의 카메라에 액세스하려고 하면 앱이 종료됩니다.
 
 이 키는 iOS 7.0 이상에서 지원됩니다.
+
+# flutter build apk
+
+version: 2.0.2+20
+
++20 은 빌드 넘버를 나타내는 버전
+2.0.x 는 빌드 네임
+그런 다음 배포하려는 버전(2.0.3) 첫번째 부분을 사용
+
+# 앱 서명하기
+
+개발자의 정보를 앱에 주입하기 위해 앱 서명을 하며 이는 개발자를 인증하기 위한 일종의 인증서라고 이해하자
+Java 에서 제공하는 keytool 을 이용해서 keystore(앱 서명서)를 생성하여 앱을 인증하며 다음 명령을 통해 keystore 를 생성할 수 있다.
+해당 명령은 window 기준이며 linux 계열일 경우 명령이 다르다.
+
+```
+keytool -genkey -v -keystore c:/Users/[사용자 이름]/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+```
+
+내용을 살펴보면 앱 서명서(키파일: key.jks) 를 해당 경로(c:/Users/[사용자 이름]) 에 저장하고 서명서를 암호화.
+
+암호화 알고리즘은 RSA 를 사용하며 키 사이즈는 2048 크기로 하고 서명서의 유효기간은 10000일로 한다.
+
+# 이미지 업로드
+
+## multipart 란?
+
+웹 클라이언트가 요청을 보낼 때, HTTP 프로토콜의 바디 부분에 데이터를 여러 부분으로 나눠서 보내는 것입니다.
+웹 클라이언트가 서버에게 파일을 업로드할 때, http 프로토콜의 바디 부분에 파일정보를 담아서 전송을 하는데,
+파일을 한번에 여러 개 전송을 하면 body 부분에 파일이 여러 개의 부분으로 연결되어 전송됩니다.
+이렇게 여러 부분으로 나뉘어서 전송되는 것은 `Multipart data` 라고 합니다.
+보통 `파일을 전송`할 때 사용합니다.
+
+## multipart/form-data 란?
+
+일반적으로 폼 데이터를 전송하면 application/x-www-form-urlencoded 의 형식으로 전송됩니다.
+=> HTTP body 에 바로 전송하고자 하는 데이터가 들어가는 형태입니다.
+=> 예시로 name=lim&age=25 과 같은 key-value 쌍이 body에 들어가는 것입니다.
+이렇게 동일한 타입의 문자 데이터를 전송하는 것은 전혀 무리가 없습니다.
+key-value 형태의 문자데이터와 바이너리 형태의 파일 데이터가 함께 전송되는 것은 다릅니다.
+=> application/x-www-form-urlencoded 타입으로는 전송이 어렵습니다.
+=> 여기서 multipart/form-data로 지정되고 정해진 형식에 따라 메시지를 인코딩해 전송합니다.
+=> 이를 처리하기 위해 서버는 멀티파트 메시지에 대해서 각 파트별로 분리하여 개별 파일의 정보를 얻게 됩니다.
+
+- 이미지 파일도 문자로 이뤄져 있어 HTTP request body에 담아 서버로 전송합니다.
+
+먼저 XFile 형태로 받은 이미지들을 MultipartFile 타입으로 변환해 준다.
+
+```dart
+final List<MultipartFile> _files = _pickedImgs.map((img) => MultipartFile.fromFileSync(img.path,  contentType: new MediaType("image", "jpg"))).toList();
+```
+
+백엔드에서 요구하는 키값으로 FormData 만들기!
+
+```dart
+FormData _formData = FormData.fromMap({"키값": _files});
+```
+
+FormData는 http 말고 Dio로 전송한다!
+
+```dart
+Dio dio = Dio();
+
+dio.options.headers["authorization"] = AuthProvider.token;
+dio.options.contentType = 'multipart/form-data';
+
+final res = await dio.post(postNoteURL, data: _formData).then((res) {
+  Get.back();
+  return res.data;
+});
+```
