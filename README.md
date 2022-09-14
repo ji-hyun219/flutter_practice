@@ -1972,3 +1972,22 @@ final res = await dio.post(postNoteURL, data: _formData).then((res) {
   return res.data;
 });
 ```
+
+# 플러터 버전 업그레이드 3.3.1
+
+플러터 버전 업그레이드에 따라 ios 빌드를 계속 실패하였다.
+
+### 해결방법
+
+1. fvm list
+2. fvm remove 명령어로 모든 버전을 삭제한다
+3. fvm install stable 로 최신 버전을 깔아준다. (현시점 3.3.1)
+4. flutter --version 으로 확인
+5. fvm global 3.3.1 혹은 fvm global stable
+6. 버전을 바꿨으므로 vscode 를 다시 껐다가 열어준다.
+7. flutter clean
+8. flutter pub get
+9. cd ios
+10. pod install 하면 에러가 뜨면서 flutter precache --ios 하라고 뜸
+11. cd .. 후 flutter precache --ios
+12. cd ios -> pod istall
