@@ -56,6 +56,8 @@ dependencies:
   pin_entry_text_field: ^0.1.4
   pin_code_fields: ^7.4.0
   image_picker: ^0.8.5+3
+  image_cropper: ^3.0.0
+  dotted_border: ^2.0.0+2
 
 dev_dependencies:
   flutter_test:
