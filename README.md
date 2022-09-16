@@ -1991,3 +1991,74 @@ final res = await dio.post(postNoteURL, data: _formData).then((res) {
 10. pod install 하면 에러가 뜨면서 flutter precache --ios 하라고 뜸
 11. cd .. 후 flutter precache --ios
 12. cd ios -> pod istall
+
+# Get.find
+
+지금까지 GetX 의 상태값을 사용하기 위해서는 Get.put 을 이용해 컨트롤러를 생성하여 사용하였다.
+
+```dart
+final controller = Get.put(CountController());
+```
+
+만약, 자식 위젯에서 해당 컨트롤러를 사용하여 상태값을 변경하거나, 상태값을 사용해야 하는 경우는 어떻게 해야할까?
+물론 다음과 같이 생성한 컨트롤러를 파라미터로 전달할 수도 있다.
+
+```dart
+CustomWidget(controller: controller)
+```
+
+하지만 Getx 에서는 Get.find 를 제공하여 좀 더 쉽게 생성된 컨트롤러에 접근할 수 있도록 하고 있다.
+
+```dart
+Obx(
+  () => Text(
+    "${Get.find<CountController>().count.value}",
+    style: Theme.of(context).textTheme.headline4,
+  ),
+),
+
+floatingActionButton: FloatingActionButton(
+  onPressed: Get.find<CountController>().increment,
+  tooltip: 'Increment',
+  child: const Icon(Icons.add),
+),
+
+```
+
+Get.find 을 사용하면 Get.put 으로 등록한 컨트롤러를 어디에서든 접근하여 사용할 수 있습니다.
+이번 예제에서는 같은 파일내에서 사용하였지만, 자식 위젯에서도 사용이 가능합니다.
+중요한 점은 Get.put 을 사용하여 먼저 컨트롤러를 등록한 후 사용해야 한다는 것입니다.
+만약 등록이 되지 않은 컨트롤러에 접근을 한다면 에러가 발생하게 됩니다.
+
+### Get.isRegistered
+
+Get.find 는 Get.put 으로 등록된 컨트롤러만 사용할 수 있으며, 등록되지 않은 컨트롤러를 사용하면 에러가 발생합니다.
+이런 문제를 해결하기 위해 다음과 같이 `Get.isRegistered`를 사용하여 사용하고자 하는 컨트롤러가 등록되어있는지 확인할 수 있습니다.
+
+```dart
+Get.isRegistered<CountController>()
+```
+
+만약 컨트롤러가 등록이 되어있다면 `true 를 반환`하고, 등록되어 있지 않다면, `false 를 반환`하게 됩니다.
+
+### static get to
+
+GetX로 상태를 관리하다보면, Get.find 를 사용하여 상태 값에 자주 접근하게 됩니다.
+그래서 GetX 에서는 다음과 같이 static 을 이용하는 패턴을 자주 사용합니다.
+
+- lib/controller/count_controller.dart
+
+```dart
+import 'package:get/get.dart';
+
+class CountController extends GetxController {
+  static CountController get to => Get.find<CountController>();
+
+  final count = 0.obs;
+
+  void increment() {
+    count.value++;
+    // count(count.value + 1);
+  }
+}
+```
