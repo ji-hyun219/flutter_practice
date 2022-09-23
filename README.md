@@ -2062,3 +2062,90 @@ class CountController extends GetxController {
   }
 }
 ```
+
+# getx
+
+## Controller
+
+getx 를 활용한 controller 설정부터 해보기
+
+- TODO: controller 내부에서 숫자를 0 으로 초기화 해주고, 숫자를 하나씩 증가시켜주는 increase() method 를 만들어보기.
+
+```dart
+import 'package:get/get.dart';
+
+class CountControllerWithGetx extends GetxController {
+  int count = 0;
+
+  void increase() {
+    count++;
+    update();
+  }
+}
+```
+
+- 아래 page 에서 getx 를 이용한 숫자와 버튼을 띄워주기
+
+```dart
+class SimpleStateManagePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    Get.put(CountControllerWithGetx()); // <--- Get.put() 을 하게 되면 인스턴스가 생성되면서 선언한 인스턴스는 어디서든지 사용이 가능
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('단순상태관리'),
+      ),
+      body: Center(
+        child: GetxState(), // <--- 사용할 곳
+      ),
+    );
+  }
+}
+```
+
+- page 에서 인스턴스를 선언했으니`(= Get.put)` child 인 `GetxState class` 에서 불러올 수 있다.
+- `GetBuilder` 를 통해 text 를 받아올 수 있다.
+- onPressed method 내에서 page 에서 생성한 인스턴스를 불러오기
+- 한번 Get 으로 생성된 인스턴스는 `Get.find()` 로 쉽게 불러올 수 있다.
+
+```dart
+class GetxState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Getx',
+            style: TextStyle(fontSize: 50),
+          ),
+          GetBuilder<CountControllerWithGetx>(
+            builder: (controller) {
+              return Text(
+                '${controller.count}',
+                style: TextStyle(fontSize: 50),
+              );
+            },
+          ),
+          RaisedButton(
+            child: Text(
+              '+',
+              style: TextStyle(fontSize: 30),
+            ),
+            onPressed: () {
+              Get.find<CountControllerWithGetx>().increase();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+- 이렇게 되면 Getx 를 통한 상태관리는 구현이 완료된 것
+- Provider 와 굉장히 비슷한 걸 알 수 있음
+- context 와 Stateful 이 전혀 사용 안됨
