@@ -2149,3 +2149,57 @@ class GetxState extends StatelessWidget {
 - 이렇게 되면 Getx 를 통한 상태관리는 구현이 완료된 것
 - Provider 와 굉장히 비슷한 걸 알 수 있음
 - context 와 Stateful 이 전혀 사용 안됨
+
+## Get.find() 코드 간략화 팁
+
+번외로 인스턴스로 생성된 Controller 를 불러올 때 Get.find() 코드의 간략화 하는 방법
+
+1. controller - static 처리
+
+```dart
+  static CountControllerWithGetx get to => Get.find();
+```
+
+이제 to 로 controller 에 간단히 접근 가능
+
+### 위에 코드와 비교
+
+- static 활용 X
+
+```dart
+  Get.find<CountControllerWithGetx>().increase();
+```
+
+- static 활용 O
+
+```dart
+  CountControllerWithGetx.to.increase();
+```
+
+2. GetView
+   static 보다 더 간단하게 접근할 수 있는 방법
+   Get.find 가 필요한 class 를 `StatelessWidget 상속` 대신 `GetView 를 상속`시켜줌
+
+- GetView 처리 전
+
+```dart
+class GetxState extends StatelessWidget {
+```
+
+- GetView 처리 후
+
+```dart
+class GetxState extends GetView<CountControllerWithGetx> {
+```
+
+괄호 안에 class 에서 사용할 controller 를 지정
+class 내에서 나오는 controller 는 모두 `CountControllerWithGetx` controller 라고 알려줌
+그래서 Get.find() 가 아래처럼 아주 간결해짐
+
+```dart
+// GetView 처리 전
+ Get.find<CountControllerWithGetx>().increase();
+
+// GetView 처리 후
+ controller.increase();
+```
