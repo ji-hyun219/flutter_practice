@@ -2203,3 +2203,145 @@ class 내에서 나오는 controller 는 모두 `CountControllerWithGetx` contro
 // GetView 처리 후
  controller.increase();
 ```
+
+# Named Constructor
+
+constructor 를 선언하지 않으면 기본적으로 Default constructor 가 생긴다.
+Default constructor 는 클래스 이름과 동일한 이름을 가지고 argument 가 없다.
+
+```dart
+class Point {
+  num x, y;
+
+  /*
+  Point(num x, num y) {
+    this.x = x;
+    this.y = y;
+  }
+  */
+
+  // 위의 contructor 와 동일.
+  Point(this.x, this.y);
+
+  // Named constructor
+  Point.origin() {
+    x = 0;
+    y = 0;
+  }
+}
+```
+
+# File
+
+- import 'dart:io' 에서 가져온다. Not import 'dart:html'
+- File 에는 작업을 수행할 수 있는 `path` 가 있다.
+
+[FileSystemEntity]에서 상속된 속성인 [parent]를 사용하여 파일의 부모 디렉터리를 가져올 수 있다.
+
+프로그램에서 파일 시스템의 지정된 파일에 액세스하려면 경로 이름을 사용하여 `새 File 개체`를 만든다.
+
+```dart
+var myFile = File('파일.txt');
+```
+
+File 클래스에는 파일과 그 내용을 조작하기 위한 메서드가 포함되어 있다.
+이 클래스의 메소드를 사용하여 파일을 열고 닫고 파일을 읽고 쓰고 파일을 생성 및 삭제하고 존재 여부를 확인할 수 있다.
+파일을 읽거나 쓸 때 스트림([openRead] 사용), 임의 액세스 작업([open] 사용) 또는 [readAsString]과 같은 편리한 메서드를 사용할 수 있습니다.
+이 클래스의 대부분의 메서드는 `동기 및 비동기 쌍으로 발생`합니다
+(예: [readAsString] 및 [readAsStringSync]).
+메서드의 동기 버전을 사용하는 특별한 이유가 없는 한 프로그램 차단을 피하기 위해 비동기 버전을 선호합니다.
+
+## 1. If path is a link
+
+If [path] is a symbolic link(심볼릭 링크), rather than a file, then the methods of File operate on the ultimate target of the link, except for [delete] and [deleteSync], which operate on the link.
+
+[path]가 파일이 아닌 심볼릭 링크인 경우 링크에서 작동하는 [delete] 및 [deleteSync]를 제외하고 File의 메서드는 링크의 최종 대상에서 작동합니다.
+
+## 2. Read from a file
+
+The following code sample reads the entire contents from a file as a string using the asynchronous [readAsString] method:
+
+```dart
+import 'dart:async';
+import 'dart:io';
+
+void main() {
+  File('file.txt').readAsString().then((String contents) {
+    print(contents);
+  });
+}
+```
+
+파일을 읽는 더 유연하고 유용한 방법은 [Stream]을 사용하는 것입니다.
+파일의 데이터를 바이트 청크로 제공하는 스트림을 반환하는 [openRead]로 파일을 엽니다.
+사용 가능한 경우 파일 내용을 처리하기 위해 스트림을 읽습니다.
+다양한 변환기를 연속적으로 사용하여 파일 내용을 필요한 형식으로 조작하거나 출력을 위해 준비할 수 있습니다.
+
+스트림을 사용하여 대용량 파일을 읽거나 변환기로 데이터를 조작하거나 [WebSocket]과 같은 다른 API와의 호환성을 원할 수 있습니다.
+
+```dart
+import 'dart:io';
+import 'dart:convert';
+import 'dart:async';
+
+void main() async {
+  final file = File('file.txt');
+  Stream<String> lines = file.openRead()
+    .transform(utf8.decoder)       // Decode bytes to UTF-8.
+    .transform(LineSplitter());    // Convert stream to individual lines.
+  try {
+    await for (var line in lines) {
+      print('$line: ${line.length} characters');
+    }
+    print('File is now closed.');
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+```
+
+## 3. Write to a file
+
+```dart
+import 'dart:io';
+
+void main() async {
+  final filename = 'file.txt';
+  var file = await File(filename).writeAsString('some content');
+  // Do something with the file.
+}
+```
+
+You can also write to a file using a [Stream].
+Open the file with [openWrite], which returns an [IOSink] to which you can write data.
+Be sure to close the sink with the [IOSink.close] method.
+
+```dart
+import 'dart:io';
+
+void main() {
+  var file = File('file.txt');
+  var sink = file.openWrite();
+  sink.write('FILE ACCESSED ${DateTime.now()}\n');
+
+  // Close the IOSink to free system resources.
+  sink.close();
+}
+```
+
+## 4. The use of asynchronous methods
+
+To avoid unintentional blocking of the program, several methods are asynchronous and return a [Future]. For example, the [length] method, which gets the length of a file, returns a [Future]. Wait for the future to get the result when it's ready.
+
+```dart
+import 'dart:io';
+
+void main() async {
+  final file = File('file.txt');
+
+  var length = await file.length();
+  print(length);
+}
+```
+
+In addition to length, the [exists], [lastModified], [stat], and other methods, are asynchronous.
