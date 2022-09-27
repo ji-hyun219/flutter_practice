@@ -2345,3 +2345,305 @@ void main() async {
 ```
 
 In addition to length, the [exists], [lastModified], [stat], and other methods, are asynchronous.
+
+# GetxService
+
+This class is like a GetxController, it shares the same lifecycle ( onInit(), onReady(), onClose()). But has no "logic" inside of it. It just notifies GetX Dependency Injection system, that this subclass can not be removed from memory.
+
+So is super useful to keep your "Services" always reachable and active with Get.find(). Like: ApiService, StorageService, CacheService.
+
+```dart
+Future<void> main() async {
+  await initServices(); /// AWAIT SERVICES INITIALIZATION.
+  runApp(SomeApp());
+}
+
+/// Is a smart move to make your Services intiialize before you run the Flutter app.
+/// as you can control the execution flow (maybe you need to load some Theme configuration,
+/// apiKey, language defined by the User... so load SettingService before running ApiService.
+/// so GetMaterialApp() doesnt have to rebuild, and takes the values directly.
+void initServices() async {
+  print('starting services ...');
+  /// Here is where you put get_storage, hive, shared_pref initialization.
+  /// or moor connection, or whatever that's async.
+  await Get.putAsync(() => DbService().init());
+  await Get.putAsync(SettingsService()).init();
+  print('All services started...');
+}
+
+class DbService extends GetxService {
+  Future<DbService> init() async {
+    print('$runtimeType delays 2 sec');
+    await 2.delay();
+    print('$runtimeType ready!');
+    return this;
+  }
+}
+
+class SettingsService extends GetxService {
+  void init() async {
+    print('$runtimeType delays 1 sec');
+    await 1.delay();
+    print('$runtimeType ready!');
+  }
+}
+```
+
+The only way to actually delete a GetxService, is with `Get.reset()` which is like a `"Hot Reboot" of your app`. So remember, if you need absolute persistence of a class instance during the lifetime of your app, use GetxService.
+
+# GetxController
+
+You can test your controllers like any other class, including their lifecycles:
+
+```dart
+class Controller extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    //Change value to name2
+    name.value = 'name2';
+  }
+
+  @override
+  void onClose() {
+    name.value = '';
+    super.onClose();
+  }
+
+  final name = 'name1'.obs;
+
+  void changeName() => name.value = 'name3';
+}
+
+void main() {
+  test('''
+Test the state of the reactive variable "name" across all of its lifecycles''',
+      () {
+    /// You can test the controller without the lifecycle,
+    /// but it's not recommended unless you're not using
+    ///  GetX dependency injection
+    /// 그러나 GetX 종속성 주입을 사용하지 않는 한 권장하지 않습니다.
+    final controller = Controller();
+    expect(controller.name.value, 'name1');
+
+    /// If you are using it, you can test everything,
+    /// including the state of the application after each lifecycle.
+    Get.put(controller); // onInit was called
+    expect(controller.name.value, 'name2');
+
+    /// Test your functions
+    controller.changeName();
+    expect(controller.name.value, 'name3');
+
+    /// onClose was called
+    Get.delete<Controller>();
+
+    expect(controller.name.value, '');
+  });
+}
+```
+
+#
+
+보통 앱 시작 시 호출되는 컨트롤러의 경우 GetMeterialApp() 의 initialBinding 에서, 그 외에는 필요한 페이지가 라우트되는 시점에 바인딩 해주는 것이 좋다.
+
+```dart
+class SomeBinding extends Bindings {
+	@override
+    dependencies() {
+    	Get.put(SomeController());
+    }
+}
+
+class SomeController extends GetxController {
+	final someText = ''.obs;
+}
+
+class SomeWidget extends GetView<SomeController> {
+	const SomeWidget({Key? key}) :super(key: key);
+
+    // 이 코드는 이제 사용하지 않아도 된다.
+    // final controller = Get.put(SomeController());
+
+    @override
+    Widget build(BuildContext context) {
+    	return Container(
+        	child: Text(controller.someText.value);
+        );
+    }
+}
+
+class SomePage extends StatelessWidget {
+	const SomePage({Key? key}) :super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+    	return Container(
+        	child: TextButton(
+            	onPressed: () => Get.to(
+                  SomeWidget(),
+                  binding: SomeBinding(),  // Get.to가 실행될 때 SomeBinding에서 dependencies()함수를 호출함.
+                );
+                child: const Text('Go to Some Widget');
+            );
+        );
+    }
+}
+```
+
+# NamedRoutes
+
+- before
+
+```dart
+GetMeterialApp(
+  namedRoutes: {
+    '/': GetRoute(page: Home()),
+  }
+)
+```
+
+- after
+
+```dart
+GetMeterialApp(
+  getPages: [
+    GetPage(name: '/', page: () => Home());
+  ]
+)
+``
+```
+
+왜 이렇게 바꼈을까?
+Why this change?
+Often, it may be necessary to decide which page will be displayed from a parameter, or a login token, the previous approach was inflexible, as it did not allow this.
+Inserting the page into a function has significantly reduced the RAM consumption, since the routes will not be allocated in memory since the app was started, and it also allowed to do this type of approach:
+
+페이지를 함수에 삽입하면 앱이 시작된 이후로 경로가 메모리에 할당되지 않고 다음 유형의 접근 방식을 수행할 수 있기때문에 RAM 소비가 크게 감소했습니다.
+
+```dart
+GetStorage box = GetStorage();
+
+GetMaterialApp(
+  getPages: [
+    GetPage(name: '/', page:(){
+      return box.hasData('token') ? Home() : Login();
+    })
+  ]
+)
+```
+
+# Get.lazyput
+
+It is possible to lazyLoad a dependency so that it will be instantiated only when is used.
+Very useful for computational expensive classes or if you want to instantiate several classes in just one place (like in a Bindings class) and you know you will not gonna use that class at that time.
+
+```dart
+/// ApiMock will only be called when someone uses Get.find<ApiMock> for the first time
+Get.lazyPut<ApiMock>(() => ApiMock());
+
+Get.lazyPut<FirebaseAuth>(
+  () {
+    // ... some logic if needed
+    return FirebaseAuth();
+  },
+  tag: Math.random().toString(),
+  fenix: true
+)
+
+Get.lazyPut<Controller>( () => Controller() )
+```
+
+# Get.putAsync
+
+만약 비동기 인스턴스를 등록하려면 Get.putAsync 를 사용할 수 있습니다.
+
+```dart
+Get.putAsync<SharedPreferences>(() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('counter', 12345);
+  return prefs;
+});
+
+Get.putAsync<YourAsyncClass>( () async => await YourAsyncClass() )
+```
+
+# Bindings class
+
+- create a class and implements Binding
+
+```dart
+class HomeBinding implements Bindings {}
+```
+
+Your IDE will automatically ask you to override the "dependencies" method, and you just need to click on the lamp, override the method, and insert all the classes you are going to use on that route:
+
+```dart
+class HomeBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<HomeController>(() => HomeController());
+    Get.put<Service>(()=> Api());
+  }
+}
+
+class DetailsBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<DetailsController>(() => DetailsController());
+  }
+}
+```
+
+Now you just need to inform your route, that you will use that binding to make the connection between route manager, dependencies and states.
+
+```dart
+getPages: [
+  GetPage(
+    name: '/',
+    page: () => HomeView(),
+    binding: HomeBinding(),
+  ),
+  GetPage(
+    name: '/details',
+    page: () => DetailsView(),
+    binding: DetailsBinding(),
+  ),
+];
+```
+
+There, you don't have to worry about memory management of your application anymore, Get will do it for you.
+
+The Binding class is called when a route is called, you can create an "initialBinding in your GetMaterialApp to insert all the dependencies that will be created.
+
+```dart
+GetMaterialApp(
+  initialBinding: SampleBind(),
+  home: Home(),
+);
+```
+
+# BindingsBuilder
+
+The default way of creating a binding is by creating a class that implements Bindings.
+But alternatively, you can use BindingsBuilder callback so that you can simply use a function to instantiate whatever you desire.
+
+```dart
+getPages: [
+  GetPage(
+    name: '/',
+    page: () => HomeView(),
+    binding: BindingsBuilder(() {
+      Get.lazyPut<ControllerX>(() => ControllerX());
+      Get.put<Service>(()=> Api());
+    }),
+  ),
+  GetPage(
+    name: '/details',
+    page: () => DetailsView(),
+    binding: BindingsBuilder(() {
+      Get.lazyPut<DetailsController>(() => DetailsController());
+    }),
+  ),
+];
+```
