@@ -2647,3 +2647,107 @@ getPages: [
   ),
 ];
 ```
+
+https://jacobko.info/flutter/flutter-17/
+
+# this
+
+```dart
+class CashStepController extends GetxService {
+  final steps = 0.obs;
+  final enabled = false.obs;
+
+  Future<CashStepController> init() async {
+    await ...
+    return this; // <--
+  }
+
+  Future<bool> isEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool(Constants.cashstepEnabledKey) ?? false;
+  }
+}
+```
+
+정말 간단히 적어봄.
+여기서 this 는 CashStepController 객체임
+따라서 `this.steps`, `this.enabled` 이렇게 쓸 수 있다.
+그래서 반환 타입이 `CashStepController` 이다.
+
+```dart
+Future<void> initServices() async {
+  await Get.putAsync(() => CashStepController().init());
+}
+```
+
+아래는 page 에서 이렇게 쓰면 된다.
+
+```dart
+class CashStepCard extends GetView<CashStepController> {
+  ...
+
+FutureBuilder<bool>(
+  future: Get.find<CashStepController>().isEnabled(),
+  builder: (context, snapshot) {
+    final cashstepEnabled = snapshot.data ?? false;
+
+    if (cashstepEnabled) {
+      return ...
+    }
+  }
+)
+```
+
+GetView 를 통해 보다 간결하게 GetxController 나 GetxService 를 StatelessWidget 에 추가할 수 있다.
+이때 GetView 는 Get.find() 함수를 통해 컨트롤러를 호출하는데, 당연하게도 Get.put() 또는 Get.lazyPut()
+을 통해 미리 컨트롤러 인스턴스를 메모리 공간에 적재해야 한다.
+
+이를 위해 GetX 에서는 Bindings 를 지원한다.
+바인딩은 적절한 시점에서 해주는 것이 좋은데, 보통 앱 시작시 호출되는 컨트롤러의 경오 GetMaterialApp() 의 initalBinding 에서, 그 외에는 필요한 페이지가 라우트되는 시점에 바인딩 해주는 것이 좋다고 생각한다.
+
+아래의 예시를 통해 사용 방법을 확인하자.
+
+```dart
+class SomeBinding extends Bindings {
+	@override
+    dependencies() {
+    	Get.put(SomeController());
+    }
+}
+
+class SomeController extends GetxController {
+	final someText = ''.obs;
+}
+
+class SomeWidget extends GetView<SomeController> {
+	const SomeWidget({Key? key}) :super(key: key);
+
+    // 이 코드는 이제 사용하지 않아도 된다.
+    // final controller = Get.put(SomeController());
+
+    @override
+    Widget build(BuildContext context) {
+    	return Container(
+        	child: Text(controller.someText.value);
+        );
+    }
+}
+
+class SomePage extends StatelessWidget {
+	const SomePage({Key? key}) :super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+    	return Container(
+        	child: TextButton(
+            	onPressed: () => Get.to(
+                  SomeWidget(),
+                  binding: SomeBinding(),  // Get.to가 실행될 때 SomeBinding에서 dependencies()함수를 호출함.
+                );
+                child: const Text('Go to Some Widget');
+            );
+        );
+    }
+}
+```
