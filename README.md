@@ -2751,3 +2751,45 @@ class SomePage extends StatelessWidget {
     }
 }
 ```
+
+# Future.wait([ await Get.putAsync(() => FcmService().init())])
+
+여러 개의 future 가 전부 완료될 때까지 기다리는 방법
+개발을 하다 보면 여러 개의 비동기 작업을 실행하고 해당 비동기들이 모두 끝나는 시점을 기다려야 할 때가 있다.
+(javascript의 Promise.all()과 같은 기능)
+
+Flutter 에서도 이러한 기능이 있다.
+바로 Future.wait 이다.
+여러 future들을 실행하고 완료 후 결과를 반환하는데 사용법은 간단하다
+`Future.wait([futureA, futureB, futureC])` 이런식으로 실행하면 결과에
+`[futureAResult, futureBResult, futureCResult]`식으로 리스트에 위에서 선언한 순서대로 담겨 나오게 된다.
+
+```dart
+FutureBuilder(
+    future: Future.wait([
+         firstFuture(), // Future<bool> firstFuture() async {...}
+         secondFuture(),// Future<bool> secondFuture() async {...}
+         //... More futures
+    ]),
+    builder: (
+       context,
+       // List of booleans(results of all futures above)
+       AsyncSnapshot<List<bool>> snapshot,
+    ){
+
+       // Check hasData once for all futures.
+       if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+       }
+
+       // Access first Future's data:
+       // snapshot.data[0]
+
+       // Access second Future's data:
+       // snapshot.data[1]
+
+       return Container();
+
+    }
+);
+```
