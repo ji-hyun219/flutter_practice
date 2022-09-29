@@ -2793,3 +2793,136 @@ FutureBuilder(
     }
 );
 ```
+
+# Firebase Anayltics 란
+
+Google analytics 는 유저의 앱 사용과 행동 패턴에 대한 정보를 무료로 제공하는 서비스이다.
+Anayltics 리포트는 사용자의 행동을 명확하게 알 수 있게 도와주며 이를 통해 앱 마케팅 및 성능 최적화를 효과적으로 할 수 있다.
+
+firebase_analytics: "^7.0.1"
+
+### App open
+
+```dart
+logAppOpen()
+```
+
+표준 app_open 이벤트 로그를 발생시킨다.
+
+### Login
+
+```dart
+logLogin({String loginMethod})
+```
+
+표준 login 이벤트 로그를 발생시킨다.
+
+### SelectContent
+
+```dart
+logSelectContent({String contentType, String itmeId})
+```
+
+표준 select_content 이벤트 로그를 발생시킨다.
+유저가 특정 카테고리(contentType) 의 아이템들 중 어떤 아이템(itemId) 을 선택했는지 알려준다.
+이를 통해 인기 있는 아이템이나 카테고리를 알 수 있다.
+
+### 커스텀 이벤트 로그
+
+logEvent
+만약 제공되는 표준 메서드들에 자신이 원하는 것이 없다면 logEvent 메소드를 통해 상황에 맞는 이벤트 로그를 발생시킬 수 있다.
+
+```dart
+logEvent({String name, Map<String, dynamic> parameters})
+```
+
+name 으로 이벤트 이름, parameters 로 원하는 데이터를 설정할 수 있다.
+
+Firebase console 대시보드에서 이벤트의 통계를 확인할 수 있다.
+또한 대시보드에는 앱에서 발생한 이벤트 로그의 타입 별로 이벤트 보고서가 자동 생성된다.
+
+# onReady
+
+플러터는 1 프레임당 1번 레이아웃 작업을 실행한다. GetX에서는 onInit을 실행하고 딱 1 프레임을 보여준 다음에 onReady를 실행한다. 즉, onReady가 실행된 시점에는 레이아웃 작업을 이미 수행한 상태다. 레이아웃 작업을 수행하기 위해서는 플러터가 만드는 위젯 트리, 엘리먼트 트리, 렌더 트리가 모두 완성되어 있어야 한다.
+다시 말해 onReady가 실행되는 시점에 이미 위젯 트리, 엘리먼트 트리, 렌더 트리를 모두 완성했기 때문에 이 때는 visitChildElment 를 실행해도 에러가 나지 않는다.
+
+그렇다면 그냥 순수 플러터에도 onReady 같은 함수가 있을거야: `addPostFrameCallBack`
+그게 바로 addPostFrameCallBack 함수다. 이 친구의 역할은 이번 프레임이 끝난 다음에 콜백 함수를 실행해주는 것이다.
+https://velog.io/@broccolism/GetX-%EB%8B%A4%EC%9D%B4%EC%96%BC%EB%A1%9C%EA%B7%B8%EB%8A%94-%EC%99%9C-onInit%EC%97%90%EC%84%9C-%EB%AA%BB-%EC%93%B0%EC%A7%80-onInit%EA%B3%BC-onReady%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90
+
+# return this 다시 정리
+
+1. initService 에서 await Get.putAsync(() => CashStepController().init)
+2. 1 로 CashStepController 를 초기화해준다.
+3. 그 후 App 에서 바인딩 binding: CashStepPageBinding(),
+4. 아래 코드
+
+```dart
+class CashStepPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => CashStepController());
+  }
+}
+```
+
+5. CashStepPage 에서 GetView 활용
+6. controller 를 볼 수 있었음. 상세 클릭하면...
+
+```dart
+abstract class GetView<T> extends StatelessWidget {
+  const GetView({Key? key}) : super(key: key);
+
+  final String? tag = null;
+
+  T get controller => GetInstance().find<T>(tag: tag)!;
+
+  @override
+  Widget build(BuildContext context);
+}
+```
+
+겟뷰는 너의 controller 를 빠르게 접근할 수 있는 좋은 방법이다.
+without having to call Get.find<AwesomeeController>() 없이..
+
+- 아래는 샘플 코드
+
+```dart
+ class AwesomeController extends GetxController {
+   final String title = 'My Awesome View';
+ }
+
+ class AwesomeView extends GetView<AwesomeController> {
+   /// if you need you can pass the tag for
+   /// Get.find<AwesomeController>(tag:"myTag");
+   @override
+   final String tag = "myTag";
+
+   AwesomeView({Key key}):super(key:key);
+
+   @override
+   Widget build(BuildContext context) {
+     return Container(
+       padding: EdgeInsets.all(20),
+       child: Text( controller.title ),
+     );
+   }
+ }
+```
+
+# didChangeAppLifecycleState
+
+앱이 background 혹은 foreground 놓여질 때마다 불려짐
+
+### didChangeAppLifeCycleState 이벤트
+
+- inactive : 앱이 비활성화 상태이고 사용자의 입력을 받지 않는다.
+- paused : 앱이 보이지 않고, 사용자의 입력을 받지 않으며, 백그라운드에서 동작 중(안드로이드의 onPause() 와 동일)
+- resumed : 앱이 보이고 있고 사용자 입력을 받는다. (안드로이드의 onPostResume()와 동일)
+- suspending : 앱이 일시 중지된 상태. (안드로이드에서 onStop 과 동일)
+
+https://velog.io/@gkssk925/Flutter%ED%94%8C%EB%9F%AC%ED%84%B0%EC%97%90%EC%84%9C-%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0-%EC%9D%B4%EB%B2%A4%ED%8A%B8%EB%A5%BC-%EB%B0%9B%EA%B3%A0%EC%8B%B6%EC%9C%BC%EB%A9%B4didChangeAppLifeCycleState
+
+# RxDart 사용과 publishSubject, BehaviorSubject
+
+RxDart는 Dart를 리액티브 프로그래밍이 가능하게 하는 라이브러리이다. 이번 포스트에서는 RxDart에서 생산 주체인 Subject와 위젯의 StreamBuilder를 활용하는 방법을 간단하게 소개한다. 추가로 PublishSubject와 BehaviorSubject도 소개한다.
