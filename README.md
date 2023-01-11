@@ -2926,3 +2926,14 @@ https://velog.io/@gkssk925/Flutter%ED%94%8C%EB%9F%AC%ED%84%B0%EC%97%90%EC%84%9C-
 # RxDart 사용과 publishSubject, BehaviorSubject
 
 RxDart는 Dart를 리액티브 프로그래밍이 가능하게 하는 라이브러리이다. 이번 포스트에서는 RxDart에서 생산 주체인 Subject와 위젯의 StreamBuilder를 활용하는 방법을 간단하게 소개한다. 추가로 PublishSubject와 BehaviorSubject도 소개한다.
+
+
+# 앱스토어에 올리는 방법
+### 안드로이드
+모든 앱 > 앱 > 캐시파이 > `앱 보기` 버튼 클릭 > 대시보드로 이동하면..   
+왼쪽 사이드바에 `프로덕션`이 있다 클릭   
+> `새 버전 만들기`
+
+
+### iOS
+> 위에 메뉴 중 App Store 클릭 > `iOS 앱` 이라고 되어있는 부분에 `앱 만들기(?)` 같은거 클릭하면 됨
