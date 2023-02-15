@@ -2936,3 +2936,9 @@ RxDart는 Dart를 리액티브 프로그래밍이 가능하게 하는 라이브�
 
 ### iOS
 위에 메뉴 중 App Store 클릭 > `iOS 앱` 이라고 되어있는 부분에 `앱 만들기(?)` 같은거 클릭하면 됨
+
+
+# iOS 수출규정 문서 누락 관련
+<img width="661" alt="스크린샷 2023-02-15 오후 7 48 00" src="https://user-images.githubusercontent.com/91349474/219007035-6ac6d1ee-2e18-416a-a981-5ceddabf914b.png">   
+두번째꺼 선택하면 됨
+
